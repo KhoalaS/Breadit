@@ -1,0 +1,2831 @@
+type Query {
+    subredditInfoByName(name: String): Subreddit
+}
+
+directive @checkGatedSubredditStatus (
+    filterGatedContent: Boolean = true
+    loggedOutIsOptedIn: Boolean = false
+) on QUERY
+
+type commentForest {
+    sort: CommentSort
+    after: String
+    count: Int
+    maxDepth: Int
+    truncate: Int
+    filter: CommentTreeFilter
+}
+
+type Icon {
+    name: String
+    url: String
+}
+
+type Style {
+    legacyIcon: Icon
+    legacyPrimaryColor: String
+    legacyBannerBackgroundImage: String
+    primaryColor: String
+    icon: String
+    bannerBackgroundImage: String
+    mobileBannerImage: String
+}
+
+type Text {
+    markdown: String
+    richtext: String
+    html: String
+    typeHint: String
+}
+
+type ModPermission {
+    isAllAllowed: Boolean
+    isAccessEnabled: Boolean
+    isConfigEditingAllowed: Boolean
+    isFlairEditingAllowed: Boolean
+    isMailEditingAllowed: Boolean
+    isPostEditingAllowed: Boolean
+    isWikiEditingAllowed: Boolean
+    isChatConfigEditingAllowed: Boolean
+    isChatOperator: Boolean
+    isChannelsEditingAllowed: Boolean
+    isCommunityChatEditingAllowed: Boolean
+}
+
+type FlairSetting {
+    isEnabled: Boolean
+    isSelfAssignable: Boolean
+    isOwnFlairEnabled: Boolean
+}
+
+type AuthorFlair {
+    template: Template
+}
+
+type Template {
+    id: String
+    backgroundColor: String
+    textColor: String
+    text: String
+    richtext: String
+}
+
+type PostFlairSetting {
+    isEnabled: Boolean
+}
+
+type DevPlatformInstalledApp {
+    name: String
+    slug: String
+}
+
+type SubredditWelcomePage {
+    isEnabled: Boolean
+    isEnabledOnJoin: Boolean
+}
+
+type SubredditCommunityStatus {
+    description: Text
+    emoji: Icon
+}
+
+type CommunityGoldSettings {
+    isSubscriptionsEnabled: Boolean
+}
+
+type CommunityGold {
+    isActivePaidSubscriber: Boolean
+    settings: CommunityGoldSettings
+}
+
+type Taxonomy {
+    taxonomyTopics: [SubredditTaxonomyRelation]
+}
+
+type SubredditTaxonomyRelation {
+    taxonomyTopic: TaxonomyTopic
+    displayCopy: String
+}
+
+type TaxonomyTopic {
+    id: String
+    displayName: String
+}
+
+type YearInReviewSettings {
+    isEnabled: Boolean
+    isEligible: Boolean
+}
+
+type CommunityLeaderboard {
+    isEnabled: Boolean
+}
+
+type MomentsFeatures {
+    arenaEntrypoint: MomentsFeatureFlag
+}
+
+type UnavailableSubreddit implements Subreddit{
+    id: String
+    name: String
+    prefixedName: String
+    styles: Style
+    title: String
+    description: Text
+    publicDescriptionText: String
+    subscribersCount: Int
+    activeCount: Int
+    createdAt: String
+    type: String
+    path: String
+    isNsfw: Boolean
+    wikiEditMode: WikiEditMode
+    whitelistStatus: WhitelistStatus
+    isPostingRestricted: Boolean
+    isQuarantined: Boolean
+    quarantineMessage: Text
+    interstitialWarningMessage: Text
+    allowedPostTypes: [PostType]
+    isSpoilerAvailable: Boolean
+    isUserBanned: Boolean
+    isContributor: Boolean
+    modPermissions: ModPermission
+    isSubscribed: Boolean
+    isFavorite: Boolean
+    notificationLevel: SubredditNotificationLevel
+    authorFlairSettings: FlairSetting
+    authorFlair: AuthorFlair
+    postFlairSettings: PostFlairSetting
+    originalContentCategories: [String]
+    isTitleSafe: Boolean
+    isMediaInCommentsSettingShown: Boolean
+    allowedMediaInComments: [CommentMediaType]
+    isMuted: Boolean
+    isChannelsEnabled: Boolean
+    isCrosspostingAllowed: Boolean
+    devPlatformInstalledApps: [DevPlatformInstalledApp]
+    detectedLanguage: String
+    welcomePage: SubredditWelcomePage
+    communityStatus: SubredditCommunityStatus
+    communityGold: CommunityGold
+    taxonomy: Taxonomy
+    yearInReviewSettings: YearInReviewSettings
+    communityLeaderboard: CommunityLeaderboard
+    momentsFeatures: MomentsFeatures
+
+    forbiddenReason: SubredditForbiddenReason
+    banTitle: String
+    banMessage: String
+    banMessageContent: Text
+    isEmailRequiredForQuarantineOptin: Boolean
+    isContributorRequestsDisabled: Boolean
+}
+
+interface Subreddit {
+    id: String
+    name: String
+    prefixedName: String
+    styles: Style
+    title: String
+    description: Text
+    publicDescriptionText: String
+    subscribersCount: Int
+    activeCount: Int
+    createdAt: String
+    type: String
+    path: String
+    isNsfw: Boolean
+    wikiEditMode: WikiEditMode
+    whitelistStatus: WhitelistStatus
+    isPostingRestricted: Boolean
+    isQuarantined: Boolean
+    quarantineMessage: Text
+    interstitialWarningMessage: Text
+    allowedPostTypes: [PostType]
+    isSpoilerAvailable: Boolean
+    isUserBanned: Boolean
+    isContributor: Boolean
+    modPermissions: ModPermission
+    isSubscribed: Boolean
+    isFavorite: Boolean
+    notificationLevel: SubredditNotificationLevel
+    authorFlairSettings: FlairSetting
+    authorFlair: AuthorFlair
+    postFlairSettings: PostFlairSetting
+    originalContentCategories: [String]
+    isTitleSafe: Boolean
+    isMediaInCommentsSettingShown: Boolean
+    allowedMediaInComments: [CommentMediaType]
+    isMuted: Boolean
+    isChannelsEnabled: Boolean
+    isCrosspostingAllowed: Boolean
+    devPlatformInstalledApps: [DevPlatformInstalledApp]
+    detectedLanguage: String
+    welcomePage: SubredditWelcomePage
+    communityStatus: SubredditCommunityStatus
+    communityGold: CommunityGold
+    taxonomy: Taxonomy
+    yearInReviewSettings: YearInReviewSettings
+    communityLeaderboard: CommunityLeaderboard
+    momentsFeatures: MomentsFeatures
+}
+
+enum ReportFormEntryPoint {
+    REPORT_PAGE
+    UNKNOWN__
+}
+enum SurveyButtonClickAction {
+    HIDE_POST
+    SHOW_LESS_SUBREDDIT
+    UNKNOWN__
+}
+enum HarassmentFilterConfidence {
+    HIGH
+    LOW
+    UNKNOWN__
+}
+enum SubscriptionState {
+    NONE
+    SUBSCRIBED
+    UNKNOWN__
+}
+enum CellMediaType {
+    IMAGE
+    UNKNOWN__
+    VIDEO
+}
+enum SubscriptionProductType {
+    COMMUNITY
+    PREMIUM
+    UNKNOWN__
+    UNSPECIFIED
+}
+enum CheckoutMode {
+    CLIENT_SIDE
+    SERVER_SIDE
+    UNKNOWN__
+}
+enum UxTargetingPageType {
+    ALL
+    COMMUNITY
+    HOME
+    LOGIN
+    MULTIREDDIT
+    PASSWORD
+    PASSWORD_RECOVERY
+    POPULAR
+    POST_DETAIL
+    PROFILE
+    PROFILE_COMMENTS
+    PROFILE_OVERVIEW
+    PROFILE_POSTS
+    PROFILE_SUBMITTED
+    REGISTER
+    SINGLE_COMMENT_THREAD
+    UNKNOWN__
+}
+enum FlairAllowableContent {
+    ALL
+    EMOJI
+    TEXT
+    UNKNOWN__
+}
+enum AchievementTrophyRarity {
+    COMMON
+    EPIC
+    LEGENDARY
+    RARE
+    UNKNOWN
+    UNKNOWN__
+}
+enum ModmailMessageParticipatingAsV {
+    MODERATOR
+    PARTICIPANT_SUBREDDIT
+    PARTICIPANT_USER
+    UNKNOWN
+    UNKNOWN__
+}
+enum ModeratorStateAction {
+    ADD_MODERATOR
+    INVITE_MODERATOR
+    REMOVE_MODERATOR
+    SET_INVITE_PERMISSIONS
+    SET_PERMISSIONS
+    UNINVITE_MODERATOR
+    UNKNOWN__
+}
+enum DiscussionType {
+    CHAT
+    COMMENT
+    UNKNOWN__
+}
+enum MimeType {
+    GIF
+    JPEG
+    MP4
+    PNG
+    QUICKTIME
+    UNKNOWN__
+    WEBP
+}
+enum MultiVisibility {
+    HIDDEN
+    PRIVATE
+    PUBLIC
+    UNKNOWN__
+}
+enum PostDistinguishState {
+    DISTINGUISHED
+    NONE
+    UNKNOWN__
+}
+enum SandboxOutcome {
+    PAYMENT_FAILURE
+    PAYMENT_SUCCESS
+    UNKNOWN__
+}
+enum AccountType {
+    APP
+    BRAND
+    UNKNOWN__
+}
+enum StorefrontStatus {
+    ACTIVE
+    SOLD_OUT
+    UNAVAILABLE
+    UNDER_MAINTENANCE
+    UNKNOWN__
+}
+enum QueryTag {
+    COVID
+    ELECTION
+    MATURE
+    NSFW
+    UNKNOWN__
+    VIOLATING
+}
+enum TaxAndBankStatus {
+    COMPLETE
+    INCOMPLETE
+    NOT_STARTED
+    PENDING
+    UNKNOWN__
+}
+enum ModerationStatus {
+    FROZEN
+    MODERATED
+    UNDISCOVERABLE
+    UNKNOWN__
+    UNMODERATED
+}
+enum HighlightedPostLabelType {
+    ANNOUNCEMENT
+    EVENT
+    MEGATHREAD
+    SHOW_POST_FLAIR
+    UNKNOWN__
+}
+enum TranslationUsage {
+    MT_SEO_PAGES
+    OTHER
+    UNKNOWN__
+}
+enum ModPnStatus {
+    AUTO
+    DISABLED
+    ENABLED
+    UNKNOWN__
+}
+enum ChatContentType {
+    GIF
+    IMAGE
+    STICKER
+    UNKNOWN__
+}
+enum CellIconShape {
+    HEX
+    ROUND
+    SQUARE
+    UNKNOWN__
+}
+enum AutoCollapseStrictness {
+    HIGH
+    LOW
+    MEDIUM
+    OFF
+    UNKNOWN__
+}
+enum ModActionCategory {
+    APPS
+    AWARDS
+    CHAT
+    COMMENTS
+    CROWD_CONTROL
+    MEMBERS
+    MOD_TEAM
+    POSTS
+    POSTS_AND_COMMENTS
+    RULES
+    SETTINGS
+    UNKNOWN__
+    WIKI
+}
+enum TemporaryEventBanEvasionRecency {
+    RECENCY_PAST_FEW_MONTHS
+    RECENCY_PAST_FEW_WEEKS
+    RECENCY_UNSPECIFIED
+    RECENCY_WITHIN_THIS_YEAR
+    UNKNOWN__
+}
+enum ModeratorPermissionInput {
+    ALL
+    MANAGE_CHANNELS
+    MANAGE_CHAT
+    MANAGE_COMMUNITY_CHAT
+    MANAGE_FLAIR
+    MANAGE_MODMAIL
+    MANAGE_POSTS
+    MANAGE_SETTINGS
+    MANAGE_USERS
+    MANAGE_WIKI
+    MONITOR_CHAT
+    UNKNOWN__
+}
+enum PaymentProvider {
+    APPLE_INAPP
+    BRAINTREE
+    GOOGLE_INAPP
+    INTERNAL
+    LEDGER
+    META
+    PAYPAL
+    REDDIT_COINS
+    REDDIT_GOLD
+    STRIPE
+    UNKNOWN__
+}
+enum ModerationVerdict {
+    ADMIN_APPROVED
+    ADMIN_REMOVED
+    ADMIN_SPAMMED
+    MOD_APPROVED
+    MOD_REMOVED
+    MOD_SPAMMED
+    UNKNOWN__
+}
+enum AccountGenderCategory {
+    FEMALE
+    MALE
+    NON_BINARY
+    OPT_OUT
+    UNKNOWN__
+    USER_DEFINED
+}
+enum ContentPolicyRule {
+    DMCA
+    RULE_1
+    RULE_2
+    RULE_3
+    RULE_4
+    RULE_5
+    RULE_6
+    RULE_7
+    RULE_8
+    UNKNOWN
+    UNKNOWN__
+}
+enum AdEventType {
+    CLICK
+    COMMENT
+    COMMENTS_VIEW
+    COMMENT_DOWNVOTE
+    COMMENT_UPVOTE
+    DOWNVOTE
+    ENGAGED_CLICK
+    GALLERY_ITEM_IMPRESSION
+    GROUP_M_VIEWABLE
+    IMPRESSION
+    LEAD_GENERATION
+    MRC_VIDEO_VIEWABLE_IMPRESSION
+    PRODUCT_CLICK
+    PRODUCT_IMPRESSION
+    RSVP
+    UNKNOWN__
+    UNLOAD
+    UPVOTE
+    VENDOR_FULLY_IN_VIEW
+    VENDOR_FULLY_IN_VIEW_15_SECS
+    VENDOR_FULLY_IN_VIEW_5_SECS
+    VIDEO_FULLY_VIEWABLE_IMPRESSION
+    VIDEO_GROUP_M_VIEWABLE
+    VIDEO_PLAYED_EXPANDED
+    VIDEO_PLAYED_WITH_SOUND
+    VIDEO_STARTED
+    VIDEO_VENDOR_FULLY_VIEWABLE_50
+    VIDEO_VIEWABLE_IMPRESSION
+    VIDEO_WATCHED_100
+    VIDEO_WATCHED_10_SECS
+    VIDEO_WATCHED_25
+    VIDEO_WATCHED_3_SECS
+    VIDEO_WATCHED_50
+    VIDEO_WATCHED_5_SECS
+    VIDEO_WATCHED_75
+    VIDEO_WATCHED_95
+    VIEWABLE_IMPRESSION
+}
+enum AutomatedReportingLevel {
+    LENIENT
+    MODERATE
+    OFF
+    STRICT
+    UNKNOWN__
+}
+enum WikiEditMode {
+    ANYONE
+    DISABLED
+    MODONLY
+    UNKNOWN__
+}
+enum ContributorTier {
+    CONTRIBUTOR
+    NON_CONTRIBUTOR
+    TOP_CONTRIBUTOR
+    UNKNOWN__
+}
+enum MachineTranslationImmersiveState {
+    DISABLED
+    ENABLED
+    UNKNOWN__
+    UNSET
+}
+enum CellIndicatorType {
+    APP
+    COMMERCIAL_COMMUNICATION
+    NSFW
+    ORIGINAL
+    QUARANTINED
+    SPOILER
+    UNKNOWN__
+}
+enum BannerActionType {
+    DISMISS
+    GOTO
+    UNKNOWN__
+}
+enum PostFeedSort {
+    AWARDED
+    BEST
+    CONTROVERSIAL
+    HOT
+    NEW
+    RISING
+    TOP
+    UNKNOWN__
+}
+enum PostEventType {
+    AMA
+    AMA_LITE
+    CONVERTED_AMA
+    UNKNOWN
+    UNKNOWN__
+}
+enum ModUserNoteLabel {
+    ABUSE_WARNING
+    BAN
+    BOT_BAN
+    HELPFUL_USER
+    PERMA_BAN
+    SOLID_CONTRIBUTOR
+    SPAM_WARNING
+    SPAM_WATCH
+    UNKNOWN__
+}
+enum DecisionAppealEligibility {
+    ELIGIBLE
+    EXISTING_APPEAL
+    NO_MATCHING_DECISION
+    PRESCRIPTIVE_PERIOD_EXPIRED
+    UNKNOWN__
+}
+enum ExplainerButtonSize {
+    LARGE
+    MEDIUM
+    SMALL
+    UNKNOWN__
+    XSMALL
+}
+enum SubscriberInviteType {
+    MODERATOR_INVITE
+    SUBSCRIBER_INVITE
+    UNKNOWN__
+}
+enum ProfileFeedSort {
+    CONTROVERSIAL
+    HOT
+    NEW
+    TOP
+    UNKNOWN__
+}
+enum MediaType {
+    EMBED
+    GIFVIDEO
+    IMAGE
+    RPAN
+    UNKNOWN__
+    VIDEO
+}
+enum DisplayTag {
+    NSFW
+    QUARANTINED
+    SPOILER
+    UNKNOWN__
+}
+enum CommentsSendRepliesState {
+    DO_NOT_SEND
+    SEND
+    UNKNOWN__
+}
+enum PrivateMessagesSource {
+    COMMENTS
+    INBOX
+    INBOX_ACTIVITY_NOTIFICATIONS
+    INBOX_NOTIFICATIONS
+    MENTIONS
+    MESSAGES
+    MODERATOR
+    SELFREPLY
+    SENT
+    UNKNOWN__
+    UNREAD
+}
+enum FilterContentType {
+    MEDIA_ONLY
+    OFF
+    UNKNOWN__
+}
+enum ModmailConversationSortV {
+    MOD
+    RECENT
+    UNKNOWN__
+    UNREAD
+    USER
+}
+enum DisplayedCollectibleItemsState {
+    DISABLED
+    ENABLED
+    UNKNOWN
+    UNKNOWN__
+}
+enum TopicSensitivity {
+    NON_SENSITIVE
+    SENSITIVE
+    UNKNOWN
+    UNKNOWN__
+}
+enum Frequency {
+    DAILY
+    HOURLY
+    MONTHLY
+    UNKNOWN__
+    WEEKLY
+}
+enum CommunityTransactionType {
+    MOD_AWARD
+    OTHER
+    SUBSCRIPTION
+    UNKNOWN__
+}
+enum CommentRange {
+    ALL
+    DAY
+    HOUR
+    MONTH
+    UNKNOWN__
+    WEEK
+    YEAR
+}
+enum PostReminderState {
+    NO_REMINDER
+    REMINDER
+    UNKNOWN__
+}
+enum AvatarExpressionPerspective {
+    CROPPED
+    FULL_BODY
+    UNKNOWN__
+    ZOOM_IN
+    ZOOM_OUT
+}
+enum ModQueueSort {
+    SORT_DATE
+    SORT_DATE_REVERSE
+    SORT_REPORTS
+    SORT_REPORTS_REVERSE
+    UNKNOWN__
+}
+enum CommunityPostType {
+    IMAGE
+    TEXT
+    UNKNOWN__
+    VIDEO
+}
+enum AwardsSheetGroupStyle {
+    COMMUNITY_GOLD_MANAGER
+    DEFAULT
+    EXCLUSIVE
+    UNKNOWN__
+}
+enum VoteState {
+    DOWN
+    NONE
+    UNKNOWN__
+    UP
+}
+enum ExplainerTextElement {
+    BODY
+    FOOTER
+    HEADER
+    TITLE
+    UNKNOWN__
+}
+enum PostHintValue {
+    GALLERY
+    HOSTED_VIDEO
+    IMAGE
+    LINK
+    POLL
+    RICH_VIDEO
+    SELF
+    UNKNOWN__
+    VIDEO
+}
+enum ExplainerButtonV {
+    PLAIN
+    PRIMARY
+    SECONDARY
+    UNKNOWN__
+}
+enum ModQueueItemType {
+    AWARD
+    CHAT_COMMENT
+    COMMENT
+    MATRIX_CHAT_EVENT
+    POST
+    UNKNOWN__
+}
+enum PostingEligibilityCriteriaRuleType {
+    MIN_AGE
+    MIN_SR_COMMENT_KARMA
+    MIN_SR_KARMA
+    MIN_TOTAL_COMMENT_KARMA
+    MIN_TOTAL_KARMA
+    MIN_TOTAL_POST_KARMA
+    UNKNOWN__
+    VERIFIED_EMAIL
+}
+enum SubscriptionStatus {
+    ABORTED
+    ACTIVATING
+    ACTIVE
+    CANCELED
+    FAILED
+    PENDING
+    TERMINATED
+    UNKNOWN__
+    UNSPECIFIED
+}
+enum DestinationSurface {
+    COMMUNITIES
+    SHARE_ACHIEVEMENT
+    UNKNOWN
+    UNKNOWN__
+}
+enum CommunityProgressCardStatus {
+    ACTIONED
+    COMPLETED
+    DISMISSED
+    INITIAL
+    UNKNOWN__
+}
+enum AvatarOutfitState {
+    DISABLED
+    DRAFT
+    ENABLED
+    RESTRICTED
+    UNKNOWN__
+}
+enum TagType {
+    CLASSIFICATION
+    COLLECTION
+    COMMENT_CLASSIFICATION
+    EVENT
+    POST_CLASSIFICATION
+    SUBREDDIT_CLASSIFICATION
+    UNKNOWN__
+}
+enum RecommendedPostFeedEntryPoint {
+    COMMUNITY
+    DEEP_LINK
+    HOME
+    POPULAR
+    PUSH_NOTIFICATION
+    SEARCH
+    SEO
+    UNKNOWN__
+}
+enum PreviousActionType {
+    AUTOMOD_REPORT
+    COMMENT_GUIDANCE
+    MOD_ACTION
+    MOD_REPORT
+    POST_GUIDANCE
+    REPORT
+    UNKNOWN__
+    USER_REPORT
+}
+enum ProfileStructuredStylesUploadType {
+    PROFILE_BANNER
+    PROFILE_ICON
+    UNKNOWN__
+}
+enum ItemRarity {
+    EPIC
+    LEGENDARY
+    RARE
+    TEST
+    UNKNOWN__
+}
+enum Month {
+    APRIL
+    AUGUST
+    DECEMBER
+    FEBRUARY
+    JANUARY
+    JULY
+    JUNE
+    MARCH
+    MAY
+    NOVEMBER
+    OCTOBER
+    SEPTEMBER
+    UNKNOWN__
+}
+enum FeedLayout {
+    CARD
+    CLASSIC
+    UNKNOWN__
+}
+enum SpoilerState {
+    NONE
+    SPOILER
+    UNKNOWN__
+}
+enum SubredditPostPermissions {
+    ALL
+    MODS
+    MODS_AND_CONTRIBUTORS
+    OFF
+    UNKNOWN
+    UNKNOWN__
+}
+enum IdentityVerificationStatus {
+    APPROVED
+    DENIED
+    PENDING
+    UNKNOWN
+    UNKNOWN__
+}
+enum StorefrontArtistsSort {
+    ID
+    ID_REVERSE
+    NAME
+    NAME_REVERSE
+    UNKNOWN__
+}
+enum Platform {
+    ANDROID_APP
+    DESKTOP_APP
+    IOS_APP
+    UNKNOWN__
+}
+enum NSFWState {
+    NONE
+    NSFW
+    UNKNOWN__
+}
+enum LinkRestrictionPolicy {
+    BLACKLIST
+    NONE
+    UNKNOWN__
+    WHITELIST
+}
+enum BlockState {
+    BLOCKED
+    NONE
+    UNKNOWN__
+}
+enum AvatarExpressionPosition {
+    CENTER
+    LEFT
+    RIGHT
+    UNKNOWN__
+}
+enum CellVideoType {
+    DASH
+    HLS
+    MP4
+    STREAMABLE
+    UNKNOWN__
+}
+enum AIModRuleViolationType {
+    COMMUNITY
+    POLICY
+    UNKNOWN__
+}
+enum AcceptPrivateMessagesFrom {
+    EVERYONE
+    UNKNOWN__
+    WHITELISTED
+}
+enum ModQueueReasonConfidenceLevel {
+    HIGH
+    LOW
+    MEDIUM
+    UNKNOWN__
+}
+enum VideoFeedEndpoint {
+    CHAT
+    COMMUNITY
+    COMMUNITY_CAROUSEL
+    DEEP_LINK
+    DIRECT_PLAY
+    DIRECT_PLAY_ENTRY
+    DISCOVER
+    DISCOVERY
+    HOME
+    NOTIFICATION
+    POPULAR
+    POPULAR_CAROUSEL
+    SEARCH
+    UNKNOWN__
+    USER_PROFILE
+    WATCH
+}
+enum ModNoteFilter {
+    ALL
+    APPROVAL
+    BAN
+    CONTENT_CHANGE
+    INVITE
+    MOD_ACTION
+    MUTE
+    NOTE
+    REMOVAL
+    SPAM
+    UNKNOWN__
+}
+enum PostKind {
+    LINK
+    POLL
+    SELF
+    UNKNOWN__
+}
+enum AutomationStatus {
+    DISABLED
+    ENABLED
+    UNKNOWN__
+}
+enum ModQueueTriggerType {
+    ADMIN
+    AUTOMOD
+    AUTOMOD_REPORT
+    BAN_EVASION
+    COMMENT_GUIDANCE
+    CROWD_CONTROL
+    HATEFUL_CONTENT
+    MOD
+    POST_GUIDANCE
+    REPUTATION
+    SEXUAL_CONTENT
+    SHADOWBANNED_SUBMITTER
+    SPAM_FILTER
+    UNKNOWN__
+    USER_REPORTS
+    VIOLENT_CONTENT
+}
+enum TopicGroupFeedElementDisplayType {
+    COMPACT
+    DEFAULT
+    ICON
+    ICON_COMPACT
+    UNKNOWN__
+}
+enum SubredditStructuredStylesUploadType {
+    BACKGROUND_IMAGE
+    BANNER_BACKGROUND_IMAGE
+    BANNER_POSITIONED_IMAGE
+    COMMUNITY_ICON
+    MENU_BACKGROUND_IMAGE
+    MOBILE_BANNER_IMAGE
+    SECONDARY_BANNER_POSITIONED_IMAGE
+    UNKNOWN__
+    WIDGET_IMAGE
+}
+enum HatefulContentThreshold {
+    LENIENT
+    MODERATE
+    OFF
+    STRICT
+    UNKNOWN__
+}
+enum PostGuidanceRuleActionType {
+    BLOCK
+    INFORM
+    REPORT
+    UNKNOWN__
+}
+enum ModNoteType {
+    APPROVAL
+    BAN
+    CONTENT_CHANGE
+    INVITE
+    MUTE
+    NOTE
+    REMOVAL
+    SPAM
+    UNKNOWN__
+}
+enum InvitePolicy {
+    ACCOUNT_AGE_30_DAYS
+    ANYBODY
+    NOBODY
+    UNKNOWN__
+}
+enum StorefrontListingTheme {
+    ALMOST_GONE
+    FEATURED
+    POPULAR
+    UNKNOWN__
+    USER_RECOMMENDED
+}
+enum PostFeedRange {
+    ALL
+    DAY
+    HOUR
+    MONTH
+    UNKNOWN__
+    WEEK
+    YEAR
+}
+enum VaultRegistrationPayloadFieldType {
+    ADDRESS
+    STRING
+    UINT256
+    UNKNOWN__
+}
+enum DistributionMediaPurpose {
+    BACKGROUND
+    INTRO_IMAGE
+    REVEAL_ANIMATION_INTRO
+    REVEAL_ANIMATION_OUTRO
+    UNKNOWN__
+}
+enum AvatarExpressionSize {
+    SIZE_1_X_1
+    SIZE_1_X_2
+    UNKNOWN__
+}
+enum BadgeStyle {
+    FILLED
+    NUMBERED
+    UNKNOWN__
+}
+enum AvatarAccessoryState {
+    CLOSET_ONLY
+    DELETED
+    DISABLED
+    ENABLED
+    INTERNAL_ONLY
+    PENDING_DELETE
+    RESTRICTED
+    UNKNOWN__
+}
+enum TemporaryEventRunStatus {
+    ACTIVE
+    CANCELED
+    COMPLETED
+    END_FAILED
+    SCHEDULED
+    START_FAILED
+    UNKNOWN__
+}
+enum OptInState {
+    OPTED_IN
+    OPTED_OUT
+    UNKNOWN__
+}
+enum ChatUserRoleConsent {
+    ACCEPT
+    DECLINE
+    UNKNOWN__
+}
+enum ReactType {
+    MEME
+    SEQUENTIAL
+    SIDE_BY_SIDE
+    UNKNOWN__
+}
+enum CommunityChatPermissionRank {
+    HIGH
+    HIGHEST
+    LOW
+    LOWEST
+    MEDIUM
+    NO_LEVEL
+    UNKNOWN__
+}
+enum ModPnSettingsLayoutIcon {
+    COMMENT
+    CROSSPOST
+    FEED_POSTS
+    INFO
+    MESSAGE
+    NOTIFY
+    REPORT
+    RISING
+    TOP
+    UNKNOWN__
+}
+enum BannerHeight {
+    LARGE
+    MEDIUM
+    SMALL
+    UNKNOWN__
+}
+enum CollectableUserInfo {
+    COMPANY
+    COMPANY_EMAIL
+    EMAIL
+    FIRST_NAME
+    JOB_TITLE
+    LAST_NAME
+    PHONE_NUMBER
+    POSTAL_CODE
+    UNKNOWN__
+}
+enum ExplainerTextAlignment {
+    CENTER
+    LEADING
+    TRAILING
+    UNKNOWN__
+}
+enum HostAppName {
+    D2X
+    MODMAIL
+    MWEB
+    R2
+    UNKNOWN__
+}
+enum DistinguishType {
+    ADMIN_DISTINGUISHED
+    ALUMNI_DISTINGUISHED
+    MOD_DISTINGUISHED
+    NONE
+    UNKNOWN__
+}
+enum PostSaveState {
+    NONE
+    SAVED
+    UNKNOWN__
+}
+enum PostType {
+    CROSSPOST
+    GALLERY
+    IMAGE
+    LINK
+    POLL
+    PREDICTION
+    SPOILER
+    STREAMING
+    TALK
+    TEXT
+    UNKNOWN__
+    VIDEO
+    VIDEOGIF
+}
+enum AppTrackingTransparencyStatus {
+    AUTHORIZED
+    DENIED
+    NOT_DETERMINED
+    RESTRICTED
+    UNKNOWN__
+}
+enum TemporaryEventConfigStatus {
+    ACTIVE
+    ARCHIVED
+    UNKNOWN__
+}
+enum TreatmentProtocol {
+    AUTHOR_SEARCH_DEFAULT
+    COMMENT_SEARCH_DEFAULT
+    COMMUNITY_SEARCH_DEFAULT
+    POST_SEARCH_DEFAULT
+    POST_SEARCH_PROMOTED_TREND
+    POST_SEARCH_TRENDING
+    POST_SEARCH_TRENDING_EXTENDED
+    UNKNOWN__
+}
+enum InvitationType {
+    MOD
+    SUBSCRIBER
+    UNKNOWN__
+}
+enum PostFollowState {
+    FOLLOWED
+    UNFOLLOWED
+    UNKNOWN__
+}
+enum SubscriptionFeature {
+    COMMUNITY
+    PREMIUM
+    UNKNOWN__
+    UNSPECIFIED
+}
+enum ModmailConversationTypeV {
+    INTERNAL
+    SR_SR
+    SR_USER
+    UNKNOWN__
+}
+enum UxTargetingCookieConsent {
+    NOT_OPTED
+    NOT_REQUIRED
+    OPTED_IN
+    UNKNOWN__
+}
+enum SourceFormat {
+    REONBOARDING
+    UNKNOWN__
+}
+enum ScheduledPostState {
+    CREATED
+    FAILED
+    PROCESSING
+    SUCCESS
+    UNKNOWN__
+}
+enum MerchandisingUnitFormat {
+    LARGE
+    MEDIUM
+    SMALL
+    UNKNOWN__
+}
+enum ButtonType {
+    IMAGE
+    TEXT
+    UNKNOWN__
+}
+enum PostGuidanceRuleLocationType {
+    ALL
+    BODY
+    TITLE
+    UNKNOWN__
+}
+enum UpdateRecommendationPreferenceAction {
+    ADD
+    REMOVE
+    UNKNOWN__
+}
+enum RemovalReasonMessageType {
+    COMMENT_AS_MOD
+    COMMENT_AS_SUBREDDIT
+    MESSAGE_AS_MOD
+    MESSAGE_AS_SUBREDDIT
+    UNKNOWN__
+}
+enum UxTargetingExperience {
+    AMA_CAROUSEL_IN_FEED
+    ANNOUNCEMENT_IN_FEED
+    ARENA_FEED
+    AUTH
+    AWARDS_PROMO
+    BLOCKING_XPROMO
+    BYPASSABLE_XPROMO
+    CHAT_CHANNELS_ON_PDP
+    CHAT_CHANNEL_UNIT_IN_HOME_FEED
+    CHAT_ONBOARDING_CTA
+    COMMUNITY_ONBOARDING
+    DESKTOP_SIDEBAR_AUTH_UNIT
+    EDUCATIONAL_DEEPLINK_PROMPT
+    EVEREST_PROMO
+    EXCLUSIVE_COMMUNITIES_GROWTH_TEST
+    EXCLUSIVE_COMMUNITIES_VALIDATION_TEST
+    GAMING_COMMUNITY_UPSELL
+    GOOGLE_ONE_TAP
+    HIGH_FLYER_UPSELL
+    INLINE_AUTH_UPSELL
+    IN_FEED_SURVEY
+    LANGUAGE_PREFERENCE_BOTTOM_SHEET
+    LIVE_CHAT_REACTION_EDU
+    LIVE_CHAT_VIDEO_EDU
+    LOGGED_IN_ONBOARDING
+    MODULAR_EDUCATION
+    NEW_IN_YOUR_COMMUNITIES_CAROUSEL
+    NEW_USER_EDUCATION
+    NEW_VISITOR_FEED_NAV
+    ONBOARDING_EMAIL_CONFIRMATION
+    ONBOARDING_FLOW_COMPLETION
+    ONBOARDING_GENDER_SELECTION
+    ONBOARDING_IN_FEED
+    ONBOARDING_TOPICS_SELECTION
+    PERSISTENT_QR_CODE_UNIT
+    PERSONALIZED_COMMUNITY_RECOMMENDATIONS_IN_DISCOVER_FEED
+    PERSONALIZED_COMMUNITY_RECOMMENDATIONS_IN_HOME_FEED
+    PWA_XPROMO
+    RECOMMENDATION_CHAINING_IN_HOME_FEED
+    REONBOARDING_BOTTOM_SHEET
+    REONBOARDING_BOTTOM_SHEET_IN_PLACE
+    REONBOARDING_IN_FEED
+    SCREENSHOT_SHARING_BANNER
+    SUBREDDIT_RECOMMENDATIONS_IN_SUBREDDIT_FEED
+    UNKNOWN__
+    VIRAL_COMMUNITY_XPROMO
+}
+enum BodyRestrictionPolicy {
+    NONE
+    NOT_ALLOWED
+    REQUIRED
+    UNKNOWN__
+}
+enum MediaAssetStatus {
+    FAILED
+    INVALID
+    UNKNOWN__
+    UNPROCESSED
+    VALID
+}
+enum UserDetailType {
+    ACCOUNT_BIO
+    BANNER_IMAGE
+    DISPLAY_NAME
+    PROFILE_IMAGE
+    UNKNOWN__
+    USERNAME
+}
+enum SearchTelemetryEventTrigger {
+    CLICK
+    CONSUME
+    LEAVE
+    UNKNOWN__
+    VIEW
+}
+enum AutomationTrigger {
+    COMMENT
+    POST
+    UNKNOWN__
+}
+enum AutomationRecommendationStatus {
+    ACCEPTED
+    DISMISSED
+    PENDING
+    UNKNOWN__
+}
+enum AdLayout {
+    CARD
+    CLASSIC
+    COMPACT
+    IMMERSIVE
+    UNKNOWN__
+}
+enum Currency {
+    AED
+    ALL
+    AMD
+    AUD
+    AWG
+    BGN
+    BHD
+    BND
+    BOB
+    BRL
+    BWP
+    CAD
+    CHF
+    CLP
+    CNY
+    COINS
+    COP
+    CRC
+    CZK
+    DKK
+    DZD
+    EGP
+    ETHEREUM
+    EUR
+    FJD
+    GBP
+    GEL
+    GHS
+    GOLD
+    HKD
+    HRK
+    HUF
+    IDR
+    ILS
+    INR
+    IQD
+    ISK
+    JOD
+    JPY
+    KES
+    KRW
+    KZT
+    MAD
+    MDL
+    MKD
+    MUR
+    MXN
+    MYR
+    NGN
+    NOK
+    NZD
+    PEN
+    PHP
+    PKR
+    PLN
+    PYG
+    QAR
+    REDDIT_GOLD
+    RON
+    RSD
+    RUB
+    SAR
+    SEK
+    SGD
+    SUBREDDIT_POINTS
+    THB
+    TND
+    TRY
+    TTD
+    TWD
+    TZS
+    UAH
+    UNKNOWN__
+    USD
+    UYU
+    VND
+    WST
+    XCD
+    ZAR
+}
+enum CrowdControlLevel {
+    LENIENT
+    MEDIUM
+    OFF
+    STRICT
+    UNKNOWN__
+}
+enum CommentSort {
+    BLANK
+    CONFIDENCE
+    CONTROVERSIAL
+    LIVE
+    NEW
+    OLD
+    QA
+    RANDOM
+    TOP
+    UNKNOWN__
+}
+enum DiscoverabilityType {
+    ONBOARDING
+    UNKNOWN
+    UNKNOWN__
+}
+enum GamificationEnrollmentStatus {
+    ENROLLED
+    OPT_OUT
+    UNKNOWN
+    UNKNOWN__
+}
+enum AIModPredictionType {
+    MENTAL_HEALTH
+    RULES
+    UNKNOWN__
+}
+enum AvatarAssetSlot {
+    ACCESSORY
+    ACCESSORY_BACK
+    BACKGROUND
+    BODY
+    BODY_BOTTOM
+    FACE_LOWER
+    FACE_UPPER
+    HAIR
+    HAIR_BACK
+    HEAD_ACCESSORY
+    SHADOW
+    UNKNOWN__
+}
+enum StorefrontListingsSort {
+    CREATION_TIME
+    CREATION_TIME_REVERSE
+    PRICE
+    PRICE_REVERSE
+    RELEASE_TIME
+    RELEASE_TIME_REVERSE
+    TOTAL_INVENTORY
+    TOTAL_INVENTORY_REVERSE
+    UNKNOWN__
+}
+enum RuleID {
+    BAN_EVASION
+    COMMITTING_SELF_HARM
+    COMMUNITY_INTERFERENCE
+    CONTEMPLATING_SELF_HARM
+    CONTRIBUTOR_PROGRAM_DECEPTIVE_MONEY_MAKING
+    CONTRIBUTOR_PROGRAM_DRUGS_GAMBLING_FIREARMS
+    CONTRIBUTOR_PROGRAM_ENCOURAGING_DONATIONS
+    CONTRIBUTOR_PROGRAM_GRAPHIC_VIOLENT
+    CONTRIBUTOR_PROGRAM_ILLEGAL_HARMFUL_BEHAVIOR
+    CONTRIBUTOR_PROGRAM_SEXUAL_SUGGESTIVE
+    COPYRIGHT_OTHER
+    COPYRIGHT_SELF
+    CUSTOM
+    HARASSMENT_AT_ME
+    HARASSMENT_AT_SOMEONE_ELSE
+    HATE_CONTENT
+    ILLEGAL_OR_DANGEROUS_BEHAVIOR
+    IMPERSONATION_OTHER
+    IMPERSONATION_SELF
+    INFRINGES_MY_IP_RIGHTS
+    INVOLUNTARY_PORN_OTHER
+    INVOLUNTARY_PORN_SELF
+    LOW_QUALITY
+    MINOR_ABUSE_OR_SEXUALIZATION_ABUSE
+    MINOR_ABUSE_OR_SEXUALIZATION_PREDATORY
+    MINOR_ABUSE_OR_SEXUALIZATION_SEXUAL
+    MINOR_SEXUALIZATION
+    MISINFORMATION
+    MISLEADING
+    NETZDG
+    NOT_APPROPRIATE
+    NSFW_CONTENT
+    OFFENSIVE
+    OFFENSIVE_OR_HOAX_CONTENT
+    OTHER
+    PII_ABOUT_ME
+    PII_ABOUT_SOMEONE_ELSE
+    POLITICAL
+    PROHIBITED_SALES
+    REPORT_BUTTON_ABUSE
+    SELF_HARM
+    SEXUALLY_EXPLICIT
+    SPAM
+    SPAM_BOTS
+    SPAM_COMMENT_FLOODING
+    SPAM_LINK_FARMING
+    SPAM_MALWARE
+    SPAM_OTHER
+    SPAM_REPOSTED_CONTENT
+    SPAM_UNSOLICITED_PMS
+    SUBREDDIT
+    TRADEMARK_OTHER
+    TRADEMARK_SELF
+    UNDER_AGE
+    UNKNOWN__
+    VIOLENCE_AT_ME
+    VIOLENCE_AT_SOMEONE_ELSE
+    VIOLENT
+    VOTE_MANIPULATION
+    VULGARITY
+}
+enum DayOfWeek {
+    FRIDAY
+    MONDAY
+    SATURDAY
+    SUNDAY
+    THURSDAY
+    TUESDAY
+    UNKNOWN__
+    WEDNESDAY
+}
+enum PostStatusIndicatorType {
+    ADMIN
+    APPROVED
+    LOCKED
+    MOD
+    PINNED
+    REPORTED
+    UNKNOWN__
+}
+enum ReportFlowType {
+    ADS
+    INLINE_CONTENT
+    MODMAIL
+    UNKNOWN__
+    USER_DETAILS
+}
+enum PostAdEligibilityStatus {
+    ELIGIBLE
+    NOT_ELIGIBLE_BRAND_UNSAFE
+    TOP_SLOT_UNSAFE
+    UNKNOWN
+    UNKNOWN__
+}
+enum CommentCollapsedReason {
+    ADMIN_TAKEDOWN
+    BLOCKED_AUTHOR
+    CROWD_CONTROL
+    DELETED
+    LOW_SCORE
+    MOD_REMOVED
+    POTENTIALLY_TOXIC
+    SPAMMY
+    STICKY_AUTOMOD
+    UNKNOWN
+    UNKNOWN__
+}
+enum MerchandisingUnitCellFormat {
+    CLASSIC
+    LARGE
+    MEDIUM
+    SMALL
+    UNKNOWN__
+}
+enum AvatarExpressionAssetLayer {
+    BACK
+    FRONT
+    UNKNOWN__
+}
+enum UserAdEligibilityStatus {
+    ELIGIBLE
+    NOT_ELIGIBLE_AD_LOAD
+    NOT_ELIGIBLE_CONTEXT
+    UNKNOWN
+    UNKNOWN__
+}
+enum FlairTextColor {
+    DARK
+    LIGHT
+    UNKNOWN__
+}
+enum SubredditWikiPageStatus {
+    MAY_NOT_VIEW
+    PAGE_NOT_CREATED
+    PAGE_NOT_FOUND
+    RESTRICTED_PAGE
+    UNKNOWN
+    UNKNOWN__
+    VALID
+    WIKI_DISABLED
+}
+enum StickyPosition {
+    FIRST
+    NONE
+    SECOND
+    UNKNOWN__
+}
+enum SavedResponseContext {
+    BANS
+    CHAT
+    COMMENTS
+    GENERAL
+    MODMAIL
+    REMOVALS
+    REPORTS
+    UNKNOWN__
+}
+enum ContributorPayoutStatus {
+    COMPLETE
+    FAILED
+    PROCESSING
+    UNKNOWN__
+}
+enum FeedUILayout {
+    CARD
+    CLASSIC
+    COMPACT
+    UNKNOWN__
+}
+enum RemovedByCategory {
+    ANTI_EVIL_OPS
+    AUTHOR
+    AUTOMOD_FILTERED
+    COMMUNITY_OPS
+    CONTENT_TAKEDOWN
+    COPYRIGHT_TAKEDOWN
+    DELETED
+    MODERATOR
+    REDDIT
+    UNKNOWN__
+}
+enum ModQueueType {
+    COMMUNITY_CHAT
+    EDITED
+    MOD
+    REMOVED
+    REPORTED
+    UNKNOWN__
+    UNMODERATED
+}
+enum TransferStatus {
+    COMPLETED
+    CREATED
+    FAILED
+    IN_PROGRESS
+    UNKNOWN__
+}
+enum SubredditPostCapabilities {
+    AMA
+    UNKNOWN__
+}
+enum CustomizationFlag {
+    CUSTOM
+    DEFAULT
+    UNKNOWN__
+}
+enum ModmailMailboxCategory {
+    ALL
+    APPEALS
+    ARCHIVED
+    FILTERED
+    HIGHLIGHTED
+    INBOX
+    IN_PROGRESS
+    JOIN_REQUESTS
+    MOD_DISCUSSIONS
+    NEW
+    NOTIFICATIONS
+    UNKNOWN__
+}
+enum InboxAnnouncementOptionFlag {
+    NO_OPT_OUT
+    NO_REMOVE
+    UNKNOWN__
+}
+enum DistributionMediaPlatform {
+    ANDROID
+    ANY
+    IOS
+    UNKNOWN__
+    WEB
+}
+enum ModmailConversationActionTypeV {
+    APPROVED
+    ARCHIVED
+    BANNED
+    DISAPPROVED
+    FILTERED
+    HIGHLIGHTED
+    MUTED
+    REPORTED_TO_ADMINS
+    UNARCHIVED
+    UNBANNED
+    UNFILTERED
+    UNHIGHLIGHTED
+    UNKNOWN__
+    UNMUTED
+}
+enum NativeCellColorName {
+    CANVAS
+    DARK
+    UNKNOWN__
+}
+enum DistinguishedAs {
+    ADMIN
+    GOLD
+    GOLD_AUTO
+    MODERATOR
+    SPECIAL
+    UNKNOWN__
+}
+enum SubscriptionSource {
+    AUTOSUBSCRIBE
+    ONBOARDING
+    UNKNOWN__
+}
+enum AvatarNudgeDestination {
+    BUILDER
+    DEEP_LINK
+    EXPLAINER
+    SHOP
+    UNKNOWN__
+}
+enum AwardType {
+    COMMUNITY
+    GLOBAL
+    MODERATOR
+    UNKNOWN__
+}
+enum IdentityProviderIssuer {
+    APPLE
+    GOOGLE
+    UNKNOWN__
+}
+enum ActiveSubredditsEntryType {
+    PROFILE_FEED
+    UNKNOWN__
+    USER_SETTINGS
+}
+enum SubredditAllowedPostType {
+    ANY
+    LINK
+    SELF
+    UNKNOWN__
+}
+enum StorefrontListingBadge {
+    ALMOST_GONE
+    HOT
+    NEW
+    RARE
+    UNKNOWN__
+}
+enum CrosspostType {
+    COMMENT
+    POST
+    UNKNOWN__
+}
+enum ToxicityThresholdChatLevel {
+    DISABLED
+    ENABLED
+    UNKNOWN__
+}
+enum FollowState {
+    FOLLOWED
+    NONE
+    UNKNOWN__
+}
+enum AchievementTrophyProgressUnit {
+    BANANA
+    COMMENT
+    COMMUNITY
+    DAY
+    POST
+    SEARCH_RESULT
+    SHARE
+    UNKNOWN
+    UNKNOWN__
+    UPVOTE
+    YEAR
+}
+enum SubredditChannelTypeEnum {
+    CHAT
+    GROUP
+    POST
+    UNKNOWN__
+}
+enum TemporaryEventConfigBoolean {
+    FALSE
+    TRUE
+    UNKNOWN__
+}
+enum ExplainerButtonStyle {
+    BRAND
+    SECONDARY
+    UNKNOWN__
+}
+enum PositionedImagePosition {
+    CENTERED
+    LEFT
+    RIGHT
+    UNKNOWN__
+}
+enum WhitelistStatus {
+    ALL_ADS
+    HOUSE_ONLY
+    NO_ADS
+    PROMO_ADULT
+    PROMO_ADULT_NSFW
+    PROMO_ALL
+    PROMO_SPECIFIED
+    SOME_ADS
+    UNKNOWN__
+}
+enum ActionFormat {
+    CLICK
+    DISMISS
+    UNDO
+    UNKNOWN__
+    VIEW
+}
+enum MomentsFeatureFlag {
+    NOT_ELIGIBLE
+    OFF
+    ON
+    UNKNOWN__
+}
+enum CommentTreeFilter {
+    ANSWERED
+    UNANSWERED
+    UNKNOWN__
+}
+enum BanEvasionConfidence {
+    HIGH
+    LOW
+    MEDIUM
+    UNKNOWN__
+}
+enum NftClaimingStatus {
+    AVAILABLE_TO_CLAIM
+    CLAIMED_SUCCESSFULLY
+    CLAIM_FAILED
+    COMPLETELY_CLAIMED
+    IN_PROGRESS
+    NOT_ELIGIBLE_TO_CLAIM
+    NO_NFT_LEFT
+    UNDEFINED
+    UNKNOWN__
+}
+enum FilterAction {
+    FILTER
+    REMOVE
+    UNKNOWN__
+}
+enum MediaVisibility {
+    OFF
+    ON
+    SUBREDDIT
+    UNKNOWN__
+}
+enum HideState {
+    HIDDEN
+    NONE
+    UNKNOWN__
+}
+enum ChatRecommendationsType {
+    NEW
+    PERSONALIZED_RECOMMENDATIONS
+    SUBSCRIBED_SUBREDDITS
+    TRENDING
+    UNKNOWN__
+}
+enum CarouselType {
+    BELOW_COMMENT_RECOMMENDATIONS
+    NEW_IN_YOUR_COMMUNITIES
+    UNKNOWN__
+}
+enum AutomationStringFeature {
+    COMMENT_BODY
+    POST_BODY
+    POST_FLAIR
+    POST_TITLE
+    POST_TYPE
+    POST_URL
+    UNKNOWN__
+    USER_FLAIR
+}
+enum DistributionMediaType {
+    RASTER_ANIMATION
+    STATIC_IMAGE
+    UNKNOWN__
+    VECTOR_ANIMATION
+    VIDEO
+}
+enum UpdateInboxAnnouncementOptOutOption {
+    ADD_OPT_OUT
+    REMOVE_OPT_OUT
+    UNKNOWN__
+}
+enum BanEvasionRecency {
+    PAST_FEW_MONTHS
+    PAST_FEW_WEEKS
+    UNKNOWN__
+    WITHIN_THIS_YEAR
+}
+enum ImagePosition {
+    COVER
+    TILED
+    UNKNOWN__
+}
+enum AcceptChatRequestsFrom {
+    ACCOUNT_AGE_30_DAYS
+    ANYBODY
+    NOBODY
+    UNKNOWN__
+}
+enum SubredditSort {
+    CONTROVERSIAL_ALL
+    CONTROVERSIAL_DAY
+    CONTROVERSIAL_HOUR
+    CONTROVERSIAL_MONTH
+    CONTROVERSIAL_WEEK
+    CONTROVERSIAL_YEAR
+    HOT
+    NEW
+    RISING
+    TOP_ALL
+    TOP_DAY
+    TOP_HOUR
+    TOP_MONTH
+    TOP_WEEK
+    TOP_YEAR
+    UNKNOWN__
+}
+enum SubredditRuleKind {
+    COMMENT
+    LINK
+    LINK_AND_COMMENT
+    UNKNOWN__
+}
+enum TemporaryEventBanEvasionConfidenceLevel {
+    LENIENT
+    OFF
+    STRICT
+    UNKNOWN__
+    UNSPECIFIED
+}
+enum ModerationVerdictReason {
+    LEGAL
+    UNKNOWN__
+}
+enum Environment {
+    PRODUCTION
+    SANDBOX
+    UNKNOWN__
+}
+enum SearchPostSort {
+    COMMENTS
+    HOT
+    NEW
+    RELEVANCE
+    TOP
+    UNKNOWN__
+}
+enum PromoLayout {
+    DYNAMIC_PRODUCT
+    FREE_FORM
+    LLM_SUGGESTED_POSTS
+    PRODUCT
+    PROMOTED_COMMUNITY_POST
+    PROMOTED_USER_POST_COLLECTION
+    SPOTLIGHT_VIDEO
+    UNKNOWN__
+}
+enum GalleryRestrictionPolicy {
+    NONE
+    NOT_ALLOWED
+    REQUIRED
+    UNKNOWN__
+}
+enum EconPromoType {
+    EDUCATIONAL_MODULE
+    UNKNOWN
+    UNKNOWN__
+}
+enum ModActionType {
+    ACCEPT_MODERATOR_INVITE
+    ADD_COMMUNITY_TOPICS
+    ADD_CONTRIBUTOR
+    ADD_MODERATOR
+    ADD_NOTE
+    ADD_REMOVAL_REASON
+    ADJUST_POST_CROWD_CONTROL_LEVEL
+    APPROVE_AWARD
+    APPROVE_COMMENT
+    APPROVE_LINK
+    BAN_USER
+    CHAT_APPROVE_MESSAGE
+    CHAT_BAN_USER
+    CHAT_INVITE_HOST
+    CHAT_REMOVE_HOST
+    CHAT_REMOVE_MESSAGE
+    CHAT_UNBAN_USER
+    COLLECTIONS
+    COMMUNITY_STATUS
+    COMMUNITY_STYLING
+    COMMUNITY_WELCOME_PAGE
+    COMMUNITY_WIDGETS
+    CREATE_AWARD
+    CREATE_REMOVAL_REASON
+    CREATE_RULE
+    CREATE_SCHEDULED_POST
+    DELETE_AWARD
+    DELETE_NOTE
+    DELETE_OVERRIDDEN_CLASSIFICATION
+    DELETE_REMOVAL_REASON
+    DELETE_RULE
+    DELETE_SCHEDULED_POST
+    DEV_PLATFORM_APP_CHANGED
+    DEV_PLATFORM_APP_DISABLED
+    DEV_PLATFORM_APP_ENABLED
+    DEV_PLATFORM_APP_INSTALLED
+    DEV_PLATFORM_APP_UNINSTALLED
+    DISABLE_AWARD
+    DISABLE_POST_CROWD_CONTROL_FILTER
+    DISTINGUISH
+    EDIT_COMMENT_REQUIREMENTS
+    EDIT_FLAIR
+    EDIT_POST_REQUIREMENTS
+    EDIT_RULE
+    EDIT_SAVED_RESPONSE
+    EDIT_SCHEDULED_POST
+    EDIT_SETTINGS
+    ENABLE_AWARD
+    ENABLE_POST_CROWD_CONTROL_FILTER
+    EVENTS
+    HIDDEN_AWARD
+    IGNORE_REPORTS
+    INVITE_MODERATOR
+    INVITE_SUBSCRIBER
+    LOCK
+    MARK_NSFW
+    MARK_ORIGINAL_CONTENT
+    MODMAIL_ENROLLMENT
+    MOD_AWARD_GIVEN
+    MUTE_USER
+    OVERRIDE_CLASSIFICATION
+    REMOVE_COMMENT
+    REMOVE_COMMUNITY_TOPICS
+    REMOVE_CONTRIBUTOR
+    REMOVE_LINK
+    REMOVE_MODERATOR
+    REMOVE_WIKI_CONTRIBUTOR
+    REORDER_MODERATORS
+    REORDER_REMOVAL_REASON
+    REORDER_RULES
+    REQUEST_ASSISTANCE
+    SET_CONTEST_MODE
+    SET_PERMISSIONS
+    SET_SUGGESTEDSORT
+    SHOW_COMMENT
+    SNOOZE_REPORTS
+    SPAM_COMMENT
+    SPAM_LINK
+    SPOILER
+    STICKY
+    SUBMIT_CONTENT_RATING_SURVEY
+    SUBMIT_SCHEDULED_POST
+    UNBAN_USER
+    UNIGNORE_REPORTS
+    UNINVITE_MODERATOR
+    UNKNOWN__
+    UNLOCK
+    UNMUTE_USER
+    UNSET_CONTEST_MODE
+    UNSNOOZE_REPORTS
+    UNSPOILER
+    UNSTICKY
+    UPDATE_REMOVAL_REASON
+    WIKI_BANNED
+    WIKI_CONTRIBUTOR
+    WIKI_PAGE_LISTED
+    WIKI_PERM_LEVEL
+    WIKI_REVISE
+    WIKI_UNBANNED
+}
+enum Visibility {
+    HIDE
+    SHOW
+    UNKNOWN__
+}
+enum SubredditForbiddenReason {
+    BANNED
+    GATED
+    GOLD_ONLY
+    PRIVATE
+    QUARANTINED
+    UNKNOWN
+    UNKNOWN__
+}
+enum EmojiFlairPermission {
+    ALL
+    LINK_FLAIR
+    NONE
+    UNKNOWN__
+    USER_FLAIR
+}
+enum AvatarCapability {
+    PREMIUM
+    UNKNOWN__
+}
+enum AdTargetingCriteria {
+    BEHAVIORAL_DYNAMIC_PRODUCT
+    BEHAVIORAL_KEYWORD
+    CONTEXTUAL_DYNAMIC_PRODUCT
+    CONTEXTUAL_KEYWORD
+    CUSTOM_AUDIENCE
+    DEVICE
+    DYNAMIC_PRODUCT
+    DYNAMIC_PRODUCT_RETARGETING
+    ENGAGEMENT_RETARGETING
+    LOOKALIKE_AUDIENCE
+    MOBILE_CARRIER
+    PIXEL_RETARGETING
+    PIXEL_RETARGETING_COHORT
+    RUN_OF_SITE
+    TAKEOVER
+    THIRD_PARTY_AUDIENCE
+    UNKNOWN__
+}
+enum SendRepliesState {
+    DO_NOT_SEND
+    SEND
+    UNKNOWN__
+}
+enum StorefrontListingStatus {
+    AVAILABLE
+    EXPIRED
+    PENDING
+    SOLD_OUT
+    UNKNOWN__
+}
+enum LockedState {
+    LOCKED
+    NONE
+    UNKNOWN__
+}
+enum TippingPayoutVerificationStatus {
+    APPROVED_TO_START
+    COMPLETE
+    IN_LINE
+    IN_PROGRESS
+    NOT_APPROVED_TO_START
+    NOT_ELIGIBLE
+    NOT_STARTED
+    UNKNOWN
+    UNKNOWN__
+}
+enum ModQueueReasonIcon {
+    AUTOMOD
+    BAN
+    CROWD_CONTROL
+    MOD_MODE
+    RATINGS_MATURE
+    REPORT
+    UNKNOWN__
+    WARNING
+}
+enum SearchErrorIcon {
+    EMPTY
+    FAILURE
+    UNKNOWN__
+}
+enum ContentRatingSurveyResponseStatus {
+    ACCEPTED
+    PENDING
+    UNKNOWN__
+}
+enum NotificationSettingsOption {
+    INBOX_ONLY
+    NONE
+    PUSH_AND_INBOX
+    UNKNOWN__
+}
+enum FeedContentType {
+    ALL
+    GIF
+    IMAGE
+    MEDIA
+    TEXT
+    UNKNOWN__
+    VIDEO
+}
+enum CommentDistinguishState {
+    DISTINGUISHED
+    DISTINGUISHED_AND_STICKIED
+    NONE
+    UNKNOWN__
+}
+enum DurationUnit {
+    DAY
+    HOUR
+    MINUTE
+    MONTH
+    SECOND
+    UNKNOWN__
+    WEEK
+    YEAR
+}
+enum WhereToPostSuggestionSource {
+    CONTENT_BASED_RECOMMENDATION
+    FAVORITE
+    FREQUENTLY_POSTED
+    RECENTLY_POSTED
+    RECENTLY_VISITED
+    SUBREDDIT_KARMA
+    SUBSCRIBED
+    TIME_ON_SUB
+    UNKNOWN__
+}
+enum OnboardingFlow {
+    BROWSE
+    DELAYED_AUTH
+    LOGGED_IN
+    ONBOARDING
+    PRELOADING_ONBOARDING
+    REONBOARDING_BOTTOM_SHEET
+    REONBOARDING_IN_FEED
+    UNKNOWN__
+}
+enum SocialLinkType {
+    BEACONS
+    BUY_ME_A_COFFEE
+    CAMEO
+    CASH_APP
+    CUSTOM
+    DISCORD
+    FACEBOOK
+    INDIEGOGO
+    INSTAGRAM
+    KICKSTARTER
+    KOFI
+    LINKTREE
+    ONLYFANS
+    PATREON
+    PAYPAL
+    REDDIT
+    SHOPIFY
+    SOUNDCLOUD
+    SPOTIFY
+    SUBSTACK
+    TIKTOK
+    TUMBLR
+    TWITCH
+    TWITTER
+    UNKNOWN__
+    VENMO
+    YOUTUBE
+}
+enum SubredditRuleContentType {
+    COMMENT
+    POST
+    UNKNOWN__
+}
+enum ContentType {
+    RTJSON
+    TEXT
+    UNKNOWN__
+}
+enum TrendingQueriesSubplacement {
+    TRENDING_DISCOVERY_TILE
+    TRENDING_SEARCH_DROPDOWN
+    UNKNOWN__
+}
+enum ChatGifsProvider {
+    GIPHY
+    UNKNOWN__
+}
+enum PaidSubscriberStatusVisibility {
+    EVERYONE
+    NO_ONE
+    UNKNOWN
+    UNKNOWN__
+}
+enum PromotedPostImageType {
+    PROFILE_IMAGE
+    THUMBNAIL
+    UNKNOWN__
+}
+enum ChatUserRole {
+    MOD
+    NONE
+    OWNER
+    UNKNOWN__
+}
+enum StorefrontLayoutScreen {
+    AVATAR_EXPLAINER
+    SHOP
+    UNKNOWN__
+}
+enum XpromoVariantFormat {
+    ABM_UPSELL_BYPASSABLE
+    APP_SELECTOR
+    APP_SELECTOR_BYPASSABLE
+    APP_SELECTOR_SLIM
+    GEO_BLOCKING
+    NSFW_BLOCKING
+    NSFW_BLOCKING_INSTANT
+    NSFW_BLOCKING_LOGGED_IN
+    NSFW_BYPASSABLE
+    UNKNOWN__
+    UNRATED_BLOCKING
+    VIRAL_COMMUNITY
+}
+enum FeedFeature {
+    COMMENT_POST_UNITS
+    SUBREDDIT_JOIN_CALL_TO_ACTION
+    UNKNOWN__
+}
+enum CommentMediaType {
+    ANIMATED
+    EXPRESSION
+    GIPHY
+    STATIC
+    UNKNOWN__
+    VIDEO
+}
+enum SubredditNotificationLevel {
+    FREQUENT
+    LOW
+    OFF
+    UNKNOWN__
+}
+enum AIModMentalHealthOutcome {
+    SAFE
+    SELF_HARM
+    UNKNOWN__
+}
+enum FavoriteState {
+    FAVORITED
+    NONE
+    UNKNOWN__
+}
+enum FeedThemeMode {
+    DARK
+    LIGHT
+    UNKNOWN__
+}
+enum MediaFeedEndpoint {
+    CHAT
+    COMMUNITY
+    COMMUNITY_CAROUSEL
+    DEEP_LINK
+    DIRECT_PLAY
+    DIRECT_PLAY_ENTRY
+    DISCOVER
+    DISCOVERY
+    HOME
+    NOTIFICATION
+    POPULAR
+    POPULAR_CAROUSEL
+    SEARCH
+    UNKNOWN__
+    USER_PROFILE
+    WATCH
+}
+enum TemporaryEventMatureContentFilterSettingsContentType {
+    MEDIA_ONLY
+    UNKNOWN__
+    UNSPECIFIED
+}
+enum CrowdsourcedQuestionType {
+    MULTI_SELECT
+    SINGLE_SELECT_NO_SUBMIT_BUTTON
+    SINGLE_SELECT_WITH_SUBMIT_BUTTON
+    UNKNOWN
+    UNKNOWN__
+}
+enum AdDisplaySource {
+    ONBOARDING
+    UNKNOWN__
+}
+enum AllowlistState {
+    ALLOWLISTED
+    NONE
+    UNKNOWN__
+}
+enum ItemStatusTag {
+    MINTED
+    MINTING
+    TRANSFERRING
+    UNKNOWN__
+}
+enum SpamLevel {
+    ALL
+    HIGH
+    LOW
+    UNKNOWN__
+}
+enum HeaderMediaSelection {
+    CUSTOM_UPLOADED_MEDIA
+    SUBREDDIT_BANNER
+    UNKNOWN__
+}
+enum SubredditType {
+    ARCHIVED
+    EMPLOYEES_ONLY
+    GOLD_ONLY
+    GOLD_RESTRICTED
+    PRIVATE
+    PUBLIC
+    RESTRICTED
+    UNKNOWN__
+    USER
+}
+enum StreakExtendedNotificationPresentation {
+    DEFAULT
+    PROGRESS_PILL
+    UNKNOWN__
+}
+enum UpdateTopicPreferencesAction {
+    ADD
+    SET
+    UNKNOWN__
+}
+enum CommentFollowState {
+    FOLLOWED
+    UNFOLLOWED
+    UNKNOWN__
+}
+enum BanEvasionConfidenceLevel {
+    LENIENT
+    OFF
+    STRICT
+    UNKNOWN__
+}
+enum ReputationFilterConfidence {
+    HIGH
+    LOW
+    UNKNOWN__
+}
+enum BanEvasionThreshold {
+    LENIENT
+    MODERATE
+    OFF
+    STRICT
+    UNKNOWN
+    UNKNOWN__
+}
+enum StorefrontListingPurpose {
+    AVATAR_BUILDER
+    STOREFRONT
+    UNKNOWN__
+}
+enum FlairType {
+    AUTHOR
+    POST
+    UNKNOWN__
+}
+enum ChatChannelRecommendationSource {
+    PESONALIZED_RECOMMENDATION
+    SUBSCRIBED_SUREDDIT
+    SUBSCRIBED_TO_SIMILAR_SUBREDDIT
+    UNKNOWN__
+}
+enum ReportSupportingEvidenceType {
+    ADDITIONAL_CONTENT
+    BAN_EVASION_USERS
+    FREE_TEXT
+    UNKNOWN__
+}
+enum CommentSaveState {
+    NONE
+    SAVED
+    UNKNOWN__
+}
+enum ProfileElementsQueryType {
+    COMMENTS
+    OVERVIEW
+    POSTS
+    POSTS_SETS
+    POSTS_SETS_COMMENTS
+    UNKNOWN__
+}
+enum CountryCode {
+    AD
+    AE
+    AF
+    AG
+    AI
+    AL
+    AM
+    AN
+    AO
+    AQ
+    AR
+    AS
+    AT
+    AU
+    AW
+    AX
+    AZ
+    BA
+    BB
+    BD
+    BE
+    BF
+    BG
+    BH
+    BI
+    BJ
+    BL
+    BM
+    BN
+    BO
+    BQ
+    BR
+    BS
+    BT
+    BV
+    BW
+    BY
+    BZ
+    CA
+    CC
+    CD
+    CF
+    CG
+    CH
+    CI
+    CK
+    CL
+    CM
+    CN
+    CO
+    CR
+    CU
+    CV
+    CW
+    CX
+    CY
+    CZ
+    DE
+    DJ
+    DK
+    DM
+    DO
+    DZ
+    EC
+    EE
+    EG
+    EH
+    ER
+    ES
+    ET
+    FI
+    FJ
+    FK
+    FM
+    FO
+    FR
+    GA
+    GB
+    GD
+    GE
+    GF
+    GG
+    GH
+    GI
+    GL
+    GM
+    GN
+    GP
+    GQ
+    GR
+    GS
+    GT
+    GU
+    GW
+    GY
+    HK
+    HM
+    HN
+    HR
+    HT
+    HU
+    ID
+    IE
+    IL
+    IM
+    IN
+    IO
+    IQ
+    IR
+    IS
+    IT
+    JE
+    JM
+    JO
+    JP
+    KE
+    KG
+    KH
+    KI
+    KM
+    KN
+    KP
+    KR
+    KW
+    KY
+    KZ
+    LA
+    LB
+    LC
+    LI
+    LK
+    LR
+    LS
+    LT
+    LU
+    LV
+    LY
+    MA
+    MC
+    MD
+    ME
+    MF
+    MG
+    MH
+    MK
+    ML
+    MM
+    MN
+    MO
+    MP
+    MQ
+    MR
+    MS
+    MT
+    MU
+    MV
+    MW
+    MX
+    MY
+    MZ
+    NA
+    NC
+    NE
+    NF
+    NG
+    NI
+    NL
+    NO
+    NP
+    NR
+    NU
+    NZ
+    OM
+    PA
+    PE
+    PF
+    PG
+    PH
+    PK
+    PL
+    PM
+    PN
+    PR
+    PS
+    PT
+    PW
+    PY
+    QA
+    RE
+    RO
+    RS
+    RU
+    RW
+    SA
+    SB
+    SC
+    SD
+    SE
+    SG
+    SH
+    SI
+    SJ
+    SK
+    SL
+    SM
+    SN
+    SO
+    SR
+    SS
+    ST
+    SV
+    SX
+    SY
+    SZ
+    TC
+    TD
+    TF
+    TG
+    TH
+    TJ
+    TK
+    TL
+    TM
+    TN
+    TO
+    TR
+    TT
+    TV
+    TW
+    TZ
+    UA
+    UG
+    UM
+    UNKNOWN__
+    US
+    UY
+    UZ
+    VA
+    VC
+    VE
+    VG
+    VI
+    VN
+    VU
+    WF
+    WS
+    XK
+    XX
+    XZ
+    YE
+    YT
+    ZA
+    ZM
+    ZW
+    ZZ
+}

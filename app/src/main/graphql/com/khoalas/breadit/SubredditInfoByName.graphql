@@ -1,0 +1,202 @@
+query SubredditInfoByName(
+    $subredditName: String!,
+    $loggedOutIsOptedIn: Boolean = false,
+    $filterGated: Boolean = true,
+    $includeRecapFields: Boolean!,
+    $includeWelcomePage: Boolean!,
+    $includeCommunityGold: Boolean!,
+    $includeCommunityLeaderboard: Boolean!,
+    $includeMomentFeatures: Boolean!
+) @checkGatedSubredditStatus(
+    filterGatedContent: $filterGated
+    loggedOutIsOptedIn: $loggedOutIsOptedIn
+){
+    subredditInfoByName(name: $subredditName) {
+        __typename
+        ...subredditDataDetailsFragment
+        ...subredditTaxonomyFieldsFragment
+        ...subredditRecapFieldsFragment @include(if: $includeRecapFields)
+        ...unavailableSubredditFragment
+        ...subredditCommunityLeaderboardFragment @include(if: $includeCommunityLeaderboard)
+        ...subredditMomentFeaturesFragment @include(if: $includeMomentFeatures)
+    }
+}
+
+fragment welcomePageFlagsFragment on SubredditWelcomePage {
+    isEnabled
+    isEnabledOnJoin
+}
+fragment communityStatusFragment on SubredditCommunityStatus {
+    description {
+        markdown
+        richtext
+    }
+    emoji {
+        name
+        url
+    }
+}
+fragment communityGoldFragment on CommunityGold {
+    isActivePaidSubscriber
+    settings {
+        isSubscriptionsEnabled
+    }
+}
+fragment subredditDataDetailsFragment on Subreddit {
+    id
+    name
+    prefixedName
+    styles {
+        legacyIcon {
+            url
+        }
+        legacyPrimaryColor
+        legacyBannerBackgroundImage
+        primaryColor
+        icon
+        bannerBackgroundImage
+        mobileBannerImage
+    }
+    title
+    description {
+        markdown
+        richtext
+    }
+    publicDescriptionText
+    subscribersCount
+    activeCount
+    createdAt
+    type
+    path
+    isNsfw
+    wikiEditMode
+    whitelistStatus
+    isPostingRestricted
+    isQuarantined
+    quarantineMessage {
+        markdown
+        richtext
+    }
+    interstitialWarningMessage {
+        markdown
+        richtext
+    }
+    allowedPostTypes
+    isSpoilerAvailable
+    isUserBanned
+    isContributor
+    modPermissions {
+        isAllAllowed
+        isAccessEnabled
+        isConfigEditingAllowed
+        isFlairEditingAllowed
+        isMailEditingAllowed
+        isPostEditingAllowed
+        isWikiEditingAllowed
+        isChatConfigEditingAllowed
+        isChatOperator
+        isChannelsEditingAllowed
+        isCommunityChatEditingAllowed
+    }
+    isSubscribed
+    isFavorite
+    notificationLevel
+    authorFlairSettings {
+        isEnabled
+        isSelfAssignable
+        isOwnFlairEnabled
+    }
+    authorFlair {
+        template {
+            id
+            backgroundColor
+            textColor
+            text
+            richtext
+        }
+    }
+    postFlairSettings {
+        isEnabled
+    }
+    originalContentCategories
+    isTitleSafe
+    isMediaInCommentsSettingShown
+    allowedMediaInComments
+    isMuted
+    isChannelsEnabled
+    isCrosspostingAllowed
+    devPlatformInstalledApps {
+        name
+        slug
+    }
+    detectedLanguage
+    welcomePage @include(if: $includeWelcomePage) {
+        __typename
+        ...welcomePageFlagsFragment
+    }
+    communityStatus {
+        __typename
+        ...communityStatusFragment
+    }
+    communityGold @include(if: $includeCommunityGold) {
+        __typename
+        ...communityGoldFragment
+    }
+}
+fragment subredditTaxonomyFieldsFragment on Subreddit {
+    taxonomy {
+        taxonomyTopics {
+            __typename
+            taxonomyTopic {
+                id
+                displayName
+            }
+            ... on SubredditTaxonomyRelation {
+                displayCopy
+            }
+        }
+    }
+}
+fragment subredditRecapFieldsFragment on Subreddit {
+    yearInReviewSettings @include(if: $includeRecapFields) {
+        isEnabled
+        isEligible
+    }
+}
+fragment unavailableSubredditFragment on UnavailableSubreddit {
+    id
+    name
+    createdAt
+    publicDescriptionText
+    isQuarantined
+    forbiddenReason
+    banTitle
+    banMessage
+    banMessageContent {
+        markdown
+        richtext
+        html
+    }
+    isEmailRequiredForQuarantineOptin
+    quarantineMessage {
+        markdown
+        richtext
+        html
+        typeHint
+    }
+    interstitialWarningMessage {
+        markdown
+        richtext
+    }
+    isContributorRequestsDisabled
+}
+fragment subredditCommunityLeaderboardFragment on Subreddit {
+    communityLeaderboard @include(if: $includeCommunityLeaderboard) {
+        isEnabled
+    }
+}
+fragment subredditMomentFeaturesFragment on Subreddit {
+    momentsFeatures {
+        arenaEntrypoint
+    }
+}
