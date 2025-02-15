@@ -13,14 +13,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val repository: AuthRepository) : ViewModel() {
-    val authToken: StateFlow<String?> = repository.authToken
+    private val _authToken: StateFlow<String?> = repository.authToken
     private val _loginState = mutableStateOf<LoginState>(LoginState.LOADING)
     val loginState: State<LoginState>
         get() = _loginState
 
     init {
         viewModelScope.launch {
-            authToken.collect { token ->
+            _authToken.collect { token ->
                 if (token == null) {
                     _loginState.value = LoginState.LOGGED_OUT
                 } else if (token.isEmpty()) {

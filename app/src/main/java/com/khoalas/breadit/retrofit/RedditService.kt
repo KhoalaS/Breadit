@@ -11,7 +11,10 @@ import retrofit2.http.POST
 
 interface RedditService {
     @POST("/api/login")
-    suspend fun login(@Body request: LoginRequest, @HeaderMap headers: Map<String, String>) : Response<LoginResult>
+    suspend fun login(
+        @Body request: LoginRequest,
+        @HeaderMap headers: Map<String, String>
+    ): Response<LoginResult>
 
     @POST("/api/access_token")
     suspend fun getAccessToken(

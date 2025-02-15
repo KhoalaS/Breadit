@@ -6,8 +6,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,16 +18,8 @@ import com.khoalas.breadit.viemodel.AuthViewModel
 
 @Composable
 fun LoginScreen(viewModel: AuthViewModel) {
-    val token by viewModel.authToken.collectAsState()
     var username by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-
-
-    LaunchedEffect(token) {
-        if (!token.isNullOrEmpty()) {
-            println("User is logged in with token: $token")
-        }
-    }
 
     OutlinedTextField(
         value = username,
@@ -48,6 +38,4 @@ fun LoginScreen(viewModel: AuthViewModel) {
     Button(onClick = { viewModel.login(username, password) }) {
         Text("Login")
     }
-    Text(text = token ?: "")
-
 }

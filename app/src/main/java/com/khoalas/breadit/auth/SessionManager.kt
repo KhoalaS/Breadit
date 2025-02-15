@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.firstOrNull
-import kotlin.math.exp
 
 private val Context.dataStore by preferencesDataStore("user_prefs")
 
@@ -67,7 +66,7 @@ class SessionManager(private val context: Context) {
             .map { preferences -> preferences[TOKEN_EXPIRY_KEY] }
             .firstOrNull()
 
-        if(expiry != null) {
+        if (expiry != null) {
             return expiry.toLong()
         }
 

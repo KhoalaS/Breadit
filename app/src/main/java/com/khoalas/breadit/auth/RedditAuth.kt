@@ -8,10 +8,8 @@ import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Singleton
 
-class RedditAuth (
+class RedditAuth(
     private val okHttpClient: OkHttpClient // Injected OkHttpClient
 ) {
 
@@ -24,7 +22,7 @@ class RedditAuth (
             .create(RedditService::class.java)
     }
 
-    fun getBasicAuthHeaders(): MutableMap<String, String>{
+    fun getBasicAuthHeaders(): MutableMap<String, String> {
         val randomRate = 25 + Math.random() * 5
         val headers: MutableMap<String, String> = HashMap()
         val credentials = java.lang.String.format("%s:%s", Constants.CLIENT_ID, "")
@@ -47,7 +45,7 @@ class ResponseInterceptor : Interceptor {
         val response = chain.proceed(chain.request())
 
         // TODO check expiry and refresh token
-        if (false){
+        if (false) {
         }
 
         // Return the response to the app
