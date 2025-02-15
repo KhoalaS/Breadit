@@ -4,7 +4,7 @@ Work in progress Reddit Client using Compose and the first party GraphQL API.
 
 It is planned to extract the API, as soon as it is in a usable state.
 
-Schmema types are manually reconstructed from the query response fields. This will result in incomplete types at first.
+Schema types are manually reconstructed from the query response fields. This will result in incomplete types at first.
 
 ## GrqphQL
 
