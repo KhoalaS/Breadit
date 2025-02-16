@@ -1,26 +1,23 @@
 package com.khoalas.breadit.viemodel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.khoalas.breadit.auth.AuthRepository
 import com.khoalas.breadit.viemodel.state.LoginState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val repository: AuthRepository) : ViewModel() {
-    private val _authToken: StateFlow<String?> = repository.authToken
-    private val _loginState = mutableStateOf<LoginState>(LoginState.LOADING)
-    val loginState: State<LoginState>
-        get() = _loginState
+    private val _loginState = MutableStateFlow<LoginState>(LoginState.LOADING)
+    val loginState: StateFlow<LoginState> = _loginState
 
     init {
         viewModelScope.launch {
-            _authToken.collect { token ->
+            repository.authToken.collect { token ->
                 if (token == null) {
                     _loginState.value = LoginState.LOGGED_OUT
                 } else if (token.isEmpty()) {
