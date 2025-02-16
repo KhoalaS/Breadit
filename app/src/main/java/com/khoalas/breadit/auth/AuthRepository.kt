@@ -21,6 +21,8 @@ class AuthRepository(
 
     private val _expiry = MutableStateFlow<Long?>(null)
 
+    private val scope = Scope(scopes = listOf("*", "email", "pii"))
+
     init {
         CoroutineScope(Dispatchers.IO).launch {
             delay(500)
