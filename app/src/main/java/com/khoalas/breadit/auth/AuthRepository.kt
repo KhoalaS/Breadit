@@ -16,9 +16,6 @@ class AuthRepository(
 ) {
     private val _authToken = MutableStateFlow<String?>("") // Holds latest token
     val authToken: StateFlow<String?> = _authToken.asStateFlow()
-
-    private val scope = Scope(scopes = listOf("*", "email", "pii"))
-
     private val _expiry = MutableStateFlow<Long?>(null)
 
     private val scope = Scope(scopes = listOf("*", "email", "pii"))
