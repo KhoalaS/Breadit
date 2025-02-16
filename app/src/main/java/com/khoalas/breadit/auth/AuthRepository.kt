@@ -23,7 +23,7 @@ class AuthRepository(
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
-            delay(3000)
+            delay(500)
             _authToken.value = sessionManager.getToken()
             val expiry = sessionManager.getTokenExpiry()
             _expiry.value = expiry
