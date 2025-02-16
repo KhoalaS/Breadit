@@ -24,19 +24,15 @@ import kotlinx.coroutines.launch
 fun HomeScreen(viewModel: SubredditViewModel = viewModel()) {
     val coroutineScope = rememberCoroutineScope()
     var tabState by remember { mutableIntStateOf(0) }
+    val items = listOf("Home", "Popular")
 
     Column(modifier = Modifier.fillMaxSize()) {
         PrimaryTabRow(selectedTabIndex = tabState) {
-            Tab(
-                selected = tabState == 0,
-                onClick = { tabState = 0 },
-                text = { Text(text = "Home", maxLines = 2, overflow = TextOverflow.Ellipsis) }
-            )
-            Tab(
-                selected = tabState == 1,
-                onClick = { tabState = 1 },
-                text = { Text(text = "Popular", maxLines = 2, overflow = TextOverflow.Ellipsis) }
-            )
+            items.forEachIndexed { index, item ->
+                Tab(selected = tabState == index,
+                    onClick = { tabState = index },
+                    text = { Text(text = item, maxLines = 2, overflow = TextOverflow.Ellipsis) })
+            }
         }
 
         Button(onClick = {
