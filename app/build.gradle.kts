@@ -44,6 +44,9 @@ android {
 
 dependencies {
 
+    // Navigation
+    implementation(libs.androidx.navigation)
+
     // Apollo
     implementation(libs.apollo.runtime)
 
