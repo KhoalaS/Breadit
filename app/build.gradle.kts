@@ -61,10 +61,13 @@ dependencies {
 
     // Viewmodel
     implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Datastore
     implementation(libs.androidx.datastore)
 
+    implementation(libs.coil3.compose)
+    implementation(libs.coil3.network.okhttp)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
