@@ -16,7 +16,11 @@ class AuthRepository(
 ) {
     private val _authToken = MutableStateFlow<String?>("") // Holds latest token
     val authToken: StateFlow<String?> = _authToken.asStateFlow()
+
     private val _expiry = MutableStateFlow<Long?>(null)
+
+    private val _deviceId = MutableStateFlow<String?>(null)
+    val deviceId: StateFlow<String?> = _deviceId.asStateFlow()
 
     private val scope = Scope(scopes = listOf("*", "email", "pii"))
 
@@ -24,6 +28,8 @@ class AuthRepository(
         CoroutineScope(Dispatchers.IO).launch {
             delay(500)
             _authToken.value = sessionManager.getToken()
+            _deviceId.value = sessionManager.getDeviceId()
+
             val expiry = sessionManager.getTokenExpiry()
             _expiry.value = expiry
             val now = currentTimeMillis() / 1000
