@@ -7,6 +7,293 @@ directive @checkGatedSubredditStatus (
     loggedOutIsOptedIn: Boolean = false
 ) on QUERY
 
+# TODO postVoteIcons type inconclusive
+
+type SubredditStyles {
+    icon: String
+    legacyIcon: Icon
+    legacyPrimaryColor: String
+    legacyBannerBackgroundImage: String
+    primaryColor: String
+    bannerBackgroundImage: String
+    bannerBackgroundColor: String
+    bannerBackgroundImagePosition: ImagePosition
+    mobileBannerImage: String
+    postDownvoteIconActive: String
+    postDownvoteIconInactive: String
+    postDownvoteCountColor: String
+    postUpvoteIconActive: String
+    postUpvoteIconInactive: String
+    postUpvoteCountColor: String
+    postPlaceholderImage: String
+    postPlaceholderImagePosition: ImagePosition
+    postVoteIcons: [String]
+    highlightColor: String
+    sidebarWidgetBackgroundColor: String
+    sidebarWidgetHeaderColor: String
+}
+
+type Widgets {
+    orderedTopbarWidgets: [Widget]
+    orderedSidebarWidgets: [Widget]
+}
+
+interface Widget {
+    id: String
+    shortName: String
+}
+
+type CalendarWidget implements Widget {
+    id: String
+    shortName: String
+    isTimeShown: Boolean
+    isDescriptionShown: Boolean
+    isTitleShown: Boolean
+    isDateShown: Boolean
+    events: [Event]
+}
+
+# TODO startsAt, endsAt types inconclusive
+type Event {
+    isAllDay: Boolean
+    title: Text
+    description: Text
+    startsAt: String
+    endsAt: String
+}
+
+type ImageWidget implements Widget{
+    id: String
+    shortName: String
+    data : Media
+}
+
+type Media {
+    source: MediaSource
+    linkUrl: String
+}
+
+type CommunityListWidget implements  Widget {
+    id: String
+    shortName: String
+    communities: [Subreddit]
+}
+
+type IdCardWidget implements Widget{
+    id: String
+    shortName: String
+    currentlyViewingText: String
+    subscribersText: String
+}
+
+type ButtonWidget implements Widget{
+    id: String
+    shortName: String
+    description: Text
+    buttons: [Button]
+}
+
+type Button {
+    text: String
+    kind: String
+    color: String
+    media: Media
+}
+
+type SubredditRulesWidget implements Widget {
+    id: String
+    shortName: String
+    display: String
+}
+
+type ModeratorWidget implements Widget {
+    id: String
+    shortName: String
+    moderators: [Moderator]
+}
+
+type Moderator {
+    redditor: Redditor
+    flair: Flair
+}
+
+type Redditor {
+    name: String
+}
+
+type Flair {
+    text: String
+    template: FlairTemplate
+}
+
+type FlairTemplate {
+    id: String
+    isModOnly: Boolean
+    isEditable: Boolean
+    backgroundColor: String
+    text: String
+    type: String
+    richtext: String
+    textColor: FlairTextColor
+    allowableContent: FlairAllowableContent
+    maxEmojis: Int
+}
+
+type TextAreaWidget implements Widget {
+    id: String
+    shortName: String
+    isTimeShown: Boolean
+    isDescriptionShown: Boolean
+    isTitleShown: Boolean
+    isDateShown: Boolean
+    text: Text
+}
+
+type MenuWidget implements  Widget {
+    id: String
+    shortName: String
+    isWikiShown: Boolean
+    menus: [Menu]
+}
+
+type Menu {
+    text: String
+    url: String
+    children: [MenuChild]
+}
+
+type MenuChild {
+    text: String
+    url: String
+}
+
+type SubredditRule {
+    id: String
+    name: String
+    violationReason: String
+    priority: Int
+    content: Content
+}
+
+
+interface MediaAsset {
+    id: String
+    userId: String
+    mimetype: String
+    width: Int
+    height: Int
+}
+
+type VideoAsset implements MediaAsset{
+    id: String
+    userId: String
+    mimetype: String
+    width: Int
+    height: Int
+    dashUrl: String
+    hlsUrl: String
+    status: MediaAssetStatus
+    packagedMedia: PackagedMedia
+    still: StillMedia
+    authInfo: MediaAuthInfo
+}
+
+type StillMedia {
+    content: MediaSource
+}
+
+type PackagedMedia {
+    muxedMp4s: MuxedMp4s
+    authInfo: MediaAuthInfo
+}
+
+type MuxedMp4s {
+    low: Url
+    medium: Url
+    high: Url
+    highest: Url
+    recommended: Url
+}
+
+type ImageAsset implements MediaAsset {
+    id: String
+    userId: String
+    mimetype: String
+    width: Int
+    height: Int
+    status: MediaAssetStatus
+    url: String
+    preview(maxWidth: Int, obfuscate: Boolean): MediaSource
+}
+
+type AnimatedImageAsset implements MediaAsset{
+    id: String
+    userId: String
+    mimetype: String
+    width: Int
+    height: Int
+    status: MediaAssetStatus
+    url: String
+    preview(maxWidth: Int, obfuscate: Boolean): MediaSource
+}
+
+type Avatar {
+    id: String
+    fullImage: MediaSource
+}
+
+type ExpressionAsset {
+    image: MediaSource
+    layer: AvatarExpressionAssetLayer
+}
+
+type Expression {
+    id: String
+    name: String
+    assets: [ExpressionAsset]
+    size: AvatarExpressionSize
+    position: AvatarExpressionPosition
+    perspective: AvatarExpressionPerspective
+}
+
+type ExpressionMediaAsset implements MediaAsset {
+    id: String
+    userId: String
+    mimetype: String
+    width: Int
+    height: Int
+    avatar: Avatar
+    expression: Expression
+}
+
+type Url {
+    url: String
+}
+
+type MediaSource {
+    url: String
+    dimensions: MediaDimensions
+}
+
+type MediaDimensions {
+    width: Int
+    height: Int
+}
+
+type MediaAuthInfo {
+    authToken: String
+    authTokenExpiresAt: Int
+    authTokenId: String
+}
+
+type Content {
+    richtext: String
+    richtextMedia: [MediaAsset]
+    typeHint: ContentType
+    html: String
+    markdown: String
+}
+
 type commentForest {
     sort: CommentSort
     after: String
@@ -21,21 +308,12 @@ type Icon {
     url: String
 }
 
-type Style {
-    legacyIcon: Icon
-    legacyPrimaryColor: String
-    legacyBannerBackgroundImage: String
-    primaryColor: String
-    icon: String
-    bannerBackgroundImage: String
-    mobileBannerImage: String
-}
-
 type Text {
     markdown: String
     richtext: String
     html: String
     typeHint: String
+    preview: String
 }
 
 type ModPermission {
@@ -129,7 +407,7 @@ type UnavailableSubreddit implements Subreddit{
     id: String
     name: String
     prefixedName: String
-    styles: Style
+    styles: SubredditStyles
     title: String
     description: Text
     publicDescriptionText: String
@@ -172,6 +450,9 @@ type UnavailableSubreddit implements Subreddit{
     yearInReviewSettings: YearInReviewSettings
     communityLeaderboard: CommunityLeaderboard
     momentsFeatures: MomentsFeatures
+    widgets: Widgets
+    rules: [SubredditRule]
+    moderatorsInfo: ModeratorsInfo
 
     forbiddenReason: SubredditForbiddenReason
     banTitle: String
@@ -185,7 +466,7 @@ interface Subreddit {
     id: String
     name: String
     prefixedName: String
-    styles: Style
+    styles: SubredditStyles
     title: String
     description: Text
     publicDescriptionText: String
@@ -228,6 +509,21 @@ interface Subreddit {
     yearInReviewSettings: YearInReviewSettings
     communityLeaderboard: CommunityLeaderboard
     momentsFeatures: MomentsFeatures
+    widgets: Widgets
+    rules: [SubredditRule]
+    moderatorsInfo: ModeratorsInfo
+}
+
+type ModeratorsInfo {
+    edges: [Edge]
+}
+
+type Edge {
+    node: Node
+}
+
+type Node {
+    id: String
 }
 
 enum ReportFormEntryPoint {

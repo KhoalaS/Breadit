@@ -1,0 +1,430 @@
+query SubredditStructuredStyle(
+    $subredditName: String!
+    $includeWidgets: Boolean = false
+    $includeMediaAuth: Boolean = false
+    $includeExtendedVideoAsset: Boolean = false
+) {
+    subredditInfoByName(name: $subredditName) {
+        __typename
+        ... on Subreddit {
+            __typename
+            id
+            styles {
+                __typename
+                ...subredditStylesFragment
+            }
+            widgets {
+                orderedTopbarWidgets {
+                    __typename
+                    ...widgetFragment @include(if: $includeWidgets)
+                }
+                orderedSidebarWidgets {
+                    __typename
+                    ...widgetFragment @include(if: $includeWidgets)
+                }
+            }
+            ...moderatorsInfoFragment
+            rules {
+                __typename
+                ...ruleFragment
+            }
+        }
+    }
+}
+fragment subredditStylesFragment on SubredditStyles {
+    icon
+    primaryColor
+    bannerBackgroundImage
+    bannerBackgroundColor
+    bannerBackgroundImagePosition
+    mobileBannerImage
+    postDownvoteIconActive
+    postDownvoteIconInactive
+    postDownvoteCountColor
+    postUpvoteIconActive
+    postUpvoteIconInactive
+    postUpvoteCountColor
+    postPlaceholderImage
+    postPlaceholderImagePosition
+    postVoteIcons
+    highlightColor
+    sidebarWidgetBackgroundColor
+    sidebarWidgetHeaderColor
+}
+fragment calendarWidgetFragment on CalendarWidget {
+    id
+    shortName
+    isTimeShown
+    isDescriptionShown
+    isTitleShown
+    isDateShown
+    events {
+        isAllDay
+        title {
+            markdown
+        }
+        description {
+            preview
+        }
+        startsAt
+        endsAt
+    }
+}
+fragment imageWidgetFragment on ImageWidget {
+    id
+    shortName
+    data {
+        source {
+            url
+            dimensions {
+                width
+                height
+            }
+        }
+        linkUrl
+    }
+}
+fragment communityListWidgetFragment on CommunityListWidget {
+    id
+    shortName
+    communities {
+        __typename
+        type
+        ... on Subreddit {
+            isSubscribed
+            name
+            prefixedName
+            styles {
+                icon
+                legacyIcon {
+                    url
+                }
+                primaryColor
+            }
+            subscribersCount
+        }
+    }
+}
+fragment idCardWidgetFragment on IdCardWidget {
+    id
+    shortName
+    currentlyViewingText
+    subscribersText
+}
+fragment buttonWidgetFragment on ButtonWidget {
+    id
+    shortName
+    description {
+        markdown
+    }
+    buttons {
+        text
+        kind
+        color
+        media {
+            linkUrl
+        }
+    }
+}
+fragment rulesWidgetFragment on SubredditRulesWidget {
+    id
+    shortName
+    display
+}
+fragment flairTemplateFragment on FlairTemplate {
+    id
+    isModOnly
+    isEditable
+    backgroundColor
+    text
+    type
+    richtext
+    textColor
+    allowableContent
+    maxEmojis
+}
+fragment moderatorWidgetFragment on ModeratorWidget {
+    id
+    shortName
+    moderators {
+        redditor {
+            name
+        }
+        flair {
+            text
+            template {
+                __typename
+                ...flairTemplateFragment
+            }
+        }
+    }
+}
+fragment textAreaWidgetFragment on TextAreaWidget {
+    id
+    shortName
+    text {
+        markdown
+        preview
+        html
+    }
+}
+fragment menuWidgetFragment on MenuWidget {
+    id
+    shortName
+    isWikiShown
+    menus {
+        text
+        url
+        children {
+            text
+            url
+        }
+    }
+}
+fragment widgetFragment on Widget {
+    __typename
+    ...calendarWidgetFragment
+    ...imageWidgetFragment
+    ...communityListWidgetFragment
+    ...idCardWidgetFragment
+    ...buttonWidgetFragment
+    ...rulesWidgetFragment
+    ...moderatorWidgetFragment
+    ...textAreaWidgetFragment
+    ...menuWidgetFragment
+}
+fragment moderatorsInfoFragment on Subreddit {
+    moderatorsInfo {
+        edges {
+            node {
+                id
+            }
+        }
+    }
+}
+fragment mediaAuthInfoFragment on MediaAuthInfo {
+    authToken
+    authTokenExpiresAt
+    authTokenId
+}
+fragment packagedMediaFragment on PackagedMedia {
+    muxedMp4s {
+        low {
+            url
+        }
+        medium {
+            url
+        }
+        high {
+            url
+        }
+        highest {
+            url
+        }
+        recommended {
+            url
+        }
+    }
+    authInfo @include(if: $includeMediaAuth) {
+        __typename
+        ...mediaAuthInfoFragment
+    }
+}
+fragment MediaSourceFragment on MediaSource {
+    url
+    dimensions {
+        width
+        height
+    }
+}
+fragment imageAssetFragment on ImageAsset {
+    __typename
+    id
+    status
+    mimetype
+    width
+    height
+    url
+    small: preview(maxWidth: 108) {
+        __typename
+        ...MediaSourceFragment
+    }
+    medium: preview(maxWidth: 216) {
+        __typename
+        ...MediaSourceFragment
+    }
+    large: preview(maxWidth: 320) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xlarge: preview(maxWidth: 640) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xxlarge: preview(maxWidth: 960) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xxxlarge: preview(maxWidth: 1080) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_small: preview(maxWidth: 108, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_medium: preview(maxWidth: 216, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_large: preview(maxWidth: 320, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xlarge: preview(maxWidth: 640, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xxlarge: preview(maxWidth: 960, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xxxlarge: preview(maxWidth: 1080, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+}
+fragment animatedImageAssetFragment on AnimatedImageAsset {
+    __typename
+    id
+    status
+    mimetype
+    width
+    height
+    url
+    small: preview(maxWidth: 108) {
+        __typename
+        ...MediaSourceFragment
+    }
+    medium: preview(maxWidth: 216) {
+        __typename
+        ...MediaSourceFragment
+    }
+    large: preview(maxWidth: 320) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xlarge: preview(maxWidth: 640) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xxlarge: preview(maxWidth: 960) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xxxlarge: preview(maxWidth: 1080) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_small: preview(maxWidth: 108, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_medium: preview(maxWidth: 216, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_large: preview(maxWidth: 320, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xlarge: preview(maxWidth: 640, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xxlarge: preview(maxWidth: 960, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xxxlarge: preview(maxWidth: 1080, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+}
+fragment avatarExpressionMediaAssetFragment on MediaAsset {
+    __typename
+    ... on ExpressionMediaAsset {
+        avatar {
+            id
+            fullImage {
+                url
+            }
+        }
+        expression {
+            id
+            name
+            assets {
+                image {
+                    url
+                }
+                layer
+            }
+            size
+            position
+            perspective
+        }
+    }
+}
+fragment mediaAssetFragment on MediaAsset {
+    __typename
+    id
+    userId
+    mimetype
+    width
+    height
+    ... on VideoAsset {
+        dashUrl
+        hlsUrl
+        status @include(if: $includeExtendedVideoAsset)
+        packagedMedia @include(if: $includeExtendedVideoAsset) {
+            __typename
+            ...packagedMediaFragment
+        }
+        still @include(if: $includeExtendedVideoAsset) {
+            content {
+                url
+                dimensions {
+                    width
+                    height
+                }
+            }
+        }
+        authInfo @include(if: $includeMediaAuth) {
+            __typename
+            ...mediaAuthInfoFragment
+        }
+    }
+    ...imageAssetFragment
+    ...animatedImageAssetFragment
+    ...avatarExpressionMediaAssetFragment
+}
+fragment subredditRuleContentFragment on Content {
+    richtext
+    richtextMedia {
+        __typename
+        ...mediaAssetFragment
+    }
+    typeHint
+    html
+    markdown
+}
+fragment ruleFragment on SubredditRule {
+    id
+    name
+    violationReason
+    priority
+    content {
+        __typename
+        ...subredditRuleContentFragment
+    }
+}
