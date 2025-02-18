@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.khoalas.breadit.ui.screens.LoginScreen
 import com.khoalas.breadit.ui.screens.SubredditAboutScreen
+import com.khoalas.breadit.ui.screens.SubredditScreen
 import com.khoalas.breadit.ui.theme.BreaditTheme
 import com.khoalas.breadit.viemodel.AuthViewModel
 import com.khoalas.breadit.viemodel.state.LoginState
@@ -84,8 +85,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         when (loginState) {
                             is LoginState.LOADING -> LoadingSpinner()
-                            is LoginState.LOGGED_IN -> SubredditAboutScreen()
-                            is LoginState.LOGGED_OUT -> LoginScreen(authViewModel)
+                            is LoginState.LOGGED_IN -> SubredditScreen()
+                            is LoginState.LOGGED_OUT -> LoginScreen()
                         }
                     }
                 }
@@ -95,9 +96,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun LoadingSpinner() {
+fun LoadingSpinner(modifier: Modifier = Modifier) {
     CircularProgressIndicator(
-        modifier = Modifier.width(64.dp),
+        modifier = modifier.width(64.dp),
         color = MaterialTheme.colorScheme.secondary,
         trackColor = MaterialTheme.colorScheme.surfaceVariant,
     )
