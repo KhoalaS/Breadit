@@ -98,6 +98,8 @@ class AuthRepository(
         }
 
         val tokenResponse = accessRes.body() ?: return
+        _authToken.value = tokenResponse.access_token
+        _expiry.value = tokenResponse.expiry_ts
 
         CoroutineScope(Dispatchers.IO).launch {
             sessionManager.saveToken(tokenResponse.access_token)
