@@ -23,3 +23,10 @@ val apolloClient = ApolloClient.Builder()
             .sendDocument(false) // omits the 'query' field
             .build()
 ```
+
+## Networking
+
+Classes that contain 'x-reddit-session'
+- smali/A/y.smali
+- smali/Ud/c.smali
+- smali_classes9/AP/k.smali
