@@ -41,6 +41,7 @@ class AuthorizationInterceptor(private val auth: AuthRepository) : Interceptor {
     }
 }
 
+// TODO logging
 suspend fun <D : Query.Data> makeApolloRequest(
     client: ApolloClient,
     query: Query<D>

@@ -25,15 +25,14 @@ import kotlinx.coroutines.launch
 fun SubredditAboutScreen(viewModel: SubredditViewModel = viewModel()) {
     var tabState by remember { mutableIntStateOf(0) }
     val tabs = listOf("About", "Menu")
-    val coroutineScope = rememberCoroutineScope()
-    val subredditInfo by viewModel.subredditInfo.collectAsState()
+    val subredditData by viewModel.subredditData.collectAsState()
 
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text("Anderer Text")
 
-        if (subredditInfo!= null) {
-            Text(text = subredditInfo?.subredditDataDetailsFragment?.id ?: "Empty id")
+        if (subredditData != null) {
+            Text(text = subredditData?.id ?: "Empty id")
         } else {
             Text("loading")
         }
@@ -47,14 +46,6 @@ fun SubredditAboutScreen(viewModel: SubredditViewModel = viewModel()) {
                 )
             }
         }
-
-        Button(onClick = {
-            coroutineScope.launch {
-                viewModel.fetchSubredditInfoByName("cats")
-            }
-        }) { }
-
-
     }
 
 }

@@ -35,13 +35,6 @@ fun HomeScreen(viewModel: SubredditViewModel = viewModel()) {
             }
         }
 
-        Button(onClick = {
-            coroutineScope.launch {
-                viewModel.fetchSubredditInfoByName("cats")
-            }
-        }) {
-            Text("Button")
-        }
         Text("Logged in")
 
     }

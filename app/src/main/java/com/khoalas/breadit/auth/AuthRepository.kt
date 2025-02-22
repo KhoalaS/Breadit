@@ -27,7 +27,6 @@ class AuthRepository(
     init {
         CoroutineScope(Dispatchers.IO).launch {
             delay(500)
-            _authToken.value = sessionManager.getToken()
             _deviceId.value = sessionManager.getDeviceId()
 
             val expiry = sessionManager.getTokenExpiry()
@@ -35,6 +34,8 @@ class AuthRepository(
             val now = currentTimeMillis() / 1000
             if ((expiry - now) < 600) {
                 refreshToken()
+            }else{
+                _authToken.value = sessionManager.getToken()
             }
         }
     }
