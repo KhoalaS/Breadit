@@ -7,8 +7,6 @@ directive @checkGatedSubredditStatus (
     loggedOutIsOptedIn: Boolean = false
 ) on QUERY
 
-# TODO postVoteIcons type inconclusive
-
 type SubredditStyles {
     icon: String
     legacyIcon: Icon
@@ -27,7 +25,7 @@ type SubredditStyles {
     postUpvoteCountColor: String
     postPlaceholderImage: String
     postPlaceholderImagePosition: ImagePosition
-    postVoteIcons: [String]
+    postVoteIcons: CustomizationFlag
     highlightColor: String
     sidebarWidgetBackgroundColor: String
     sidebarWidgetHeaderColor: String
