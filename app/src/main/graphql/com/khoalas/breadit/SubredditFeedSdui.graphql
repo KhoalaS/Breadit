@@ -1,0 +1,2073 @@
+query SubredditFeedSdui (
+    $subredditName: String!
+    $adContextInput: AdContextInput
+    $feedContextInput: FeedContextInput
+    $sort: PostFeedSort
+    $time: PostFeedRange
+    $after: String
+    $includeViewCount: Boolean = false
+    $includePackagedMedia: Boolean = false
+    $includeCarouselRecommendations: Boolean = false
+    $includeListStyleRecommendations: Boolean = false
+    $includeCompactPostStyleRecommendations: Boolean = false
+    $includeCardPostStyleRecommendations: Boolean = false
+    $includeTaxonomyTopicsFeedElement: Boolean = false
+    $includeExploreFeaturedItemsFeedElement: Boolean = false
+    $includeTopicGroupFeedElement: Boolean = false
+    $includeRankedCommunityFeedElement: Boolean = false
+    $includeChatChannelFeedUnit: Boolean = false
+    $includeGoldInfo: Boolean = false
+    $includeEconPromos: Boolean = false
+    $includeMediaAuth: Boolean = false
+    $includeNewPixelTrackingFields: Boolean = false
+    $includeExcludedExperimentsField: Boolean = false
+    $includeExtendedVideoAsset: Boolean = false
+    $includeNewInCommunitiesCarousel: Boolean = false
+) {
+    subredditV3(
+        name: $subredditName
+        adContext: $adContextInput
+        feedContext: $feedContextInput
+    ) {
+        elements(sort: $sort, time: $time, after: $after) {
+            dist
+            pageInfo {
+                endCursor
+            }
+            edges {
+                __typename
+                ...FeedElementEdgeFragment
+            }
+        }
+    }
+}
+fragment AdEventFragment on AdEvent {
+    type
+    url
+    encryptedTrackingId @include(if: $includeNewPixelTrackingFields)
+}
+fragment adUserTargetingFragment on AdUserTargeting {
+    interests
+    gender
+    locations
+    targetingCriteria
+}
+fragment AdPayloadFragment on AdPayload {
+    adLinkUrl
+    ctaMediaColor
+    promoLayout
+    adInstanceId
+    domain
+    isCreatedFromAdsUi
+    callToAction
+    impressionId
+    isBlankAd
+    isSurveyAd
+    isInAppBrowserOverride
+    isVideo
+    adLinkUrl
+    adEvents {
+        __typename
+        ...AdEventFragment
+    }
+    encryptedTrackingPayload @include(if: $includeNewPixelTrackingFields)
+    additionalEventMetadata @include(if: $includeNewPixelTrackingFields)
+    appStoreData {
+        appName
+        appIcon
+        category
+        downloadCount
+        appRating
+    }
+    gallery {
+        caption
+        outboundUrl
+        displayAddress
+        callToAction
+        adEvents {
+            __typename
+            ...AdEventFragment
+        }
+    }
+    campaign {
+        id
+    }
+    formatData {
+        id
+        leadGenerationInformation {
+            leadFormFields {
+                fieldType
+                isRequired
+            }
+            collectableUserInformation
+            privacyPolicyUrl
+            prompt
+            disclaimerRichtext
+            formId
+            advertiserLegalName
+            publicEncryptionKey
+        }
+    }
+    adUserTargeting {
+        __typename
+        ...adUserTargetingFragment
+    }
+    excludedExperiments @include(if: $includeExcludedExperimentsField)
+}
+fragment RecommendationContextFragment on RecommendationContext {
+    typeIdentifier
+    typeName
+    sourceId
+    name
+    isContextHidden
+    richText
+}
+fragment ActionCellFragment on ActionCell {
+    id
+    isScoreHidden
+    isModeratable
+    commentCount
+    shareImagePath
+    isAwardHidden
+    score
+    voteState
+    shareCount
+    isTranslatable
+    isTranslated
+    viewCount @include(if: $includeViewCount)
+    goldenUpvoteInfo @include(if: $includeGoldInfo) {
+        countTotal
+        countByCurrentUser
+        isGildable
+        icon {
+            url
+        }
+        promos @include(if: $includeEconPromos) {
+            promoType
+            id
+        }
+    }
+}
+fragment AdBrandSurveyCellFragment on AdBrandSurveyCell {
+    id
+    surveyUrl
+}
+fragment TitleCellFragment on TitleCell {
+    id
+    title
+    isVisited
+}
+fragment CellMediaSourceFragment on CellMediaSource {
+    path
+    isObfuscated
+    obfuscatedPath
+    size {
+        width
+        height
+    }
+}
+fragment PreviewTextCellFragment on PreviewTextCell {
+    id
+    text
+    numberOfLines
+    isRead
+}
+fragment AdFreeFormCellFragment on AdFreeFormCell {
+    id
+    titleCell {
+        __typename
+        ...TitleCellFragment
+    }
+    image {
+        type
+        sourceData {
+            __typename
+            ...CellMediaSourceFragment
+        }
+    }
+    previewTextCell {
+        __typename
+        ...PreviewTextCellFragment
+    }
+}
+fragment GalleryCellPageFragment on GalleryCellPage {
+    image {
+        __typename
+        ...CellMediaSourceFragment
+    }
+}
+fragment CallToActionCellFragment on CallToActionCell {
+    id
+    callToAction
+    outboundUrl
+    displayAddress
+    caption
+    subcaption
+    subcaptionStrikethrough
+}
+fragment AppInstallCallToActionCellFragment on AppInstallCallToActionCell {
+    id
+    appStoreInfo {
+        appName
+        appIcon
+        appRating
+        category
+        downloadCount
+    }
+    callToActionString
+}
+fragment IndicatorsCellFragment on IndicatorsCell {
+    id
+    indicators
+    isShowDevPlatformPrivacyLink
+}
+fragment AdGalleryCellFragment on AdGalleryCell {
+    id
+    titleCell {
+        __typename
+        ...TitleCellFragment
+    }
+    height
+    pages {
+        page {
+            __typename
+            ...GalleryCellPageFragment
+        }
+        galleryPageAdEvents {
+            __typename
+            ...AdEventFragment
+        }
+        callToActionCell {
+            __typename
+            ...CallToActionCellFragment
+        }
+        appInstallCallToActionCell {
+            __typename
+            ...AppInstallCallToActionCellFragment
+        }
+    }
+    supplementaryTextString
+    indicatorsCell {
+        __typename
+        ...IndicatorsCellFragment
+    }
+}
+fragment AdPromotedCommunityPostCellFragment on AdPromotedCommunityPostCell {
+    id
+    postId
+    postType
+    title
+    thumbnailImage {
+        __typename
+        ...CellMediaSourceFragment
+    }
+    upvotesCount
+    commentsCount
+    promotedCommunityPostSubredditName: subredditName
+    subredditImage {
+        __typename
+        ...CellMediaSourceFragment
+    }
+    subredditBackgroundColor
+}
+fragment AdLlmPostSuggestionsCellFragment on AdLlmPostSuggestionsCell {
+    __typename
+    id
+    relatedPosts {
+        __typename
+        ...AdPromotedCommunityPostCellFragment
+    }
+    summary
+}
+fragment ColorFragment on CellColor {
+    __typename
+    ... on NativeCellColor {
+        name
+    }
+    ... on CustomCellColor {
+        rgbaColor
+    }
+}
+fragment AdMetadataCellFragment on AdMetadataCell {
+    id
+    createdAt
+    authorName
+    color {
+        __typename
+        ...ColorFragment
+    }
+    iconPath
+    isAuthorBrand
+}
+fragment AdPromotedUserPostCellItemFragment on AdPromotedUserPostCellItem {
+    postId
+    title
+    upvotesText
+    upvotesCount
+    commentsText
+    commentsCount
+    postImage {
+        type
+        media {
+            __typename
+            ...CellMediaSourceFragment
+        }
+    }
+}
+fragment AdPromotedUserPostCollectionCellFragment on AdPromotedUserPostCollectionCell {
+    id
+    promotedPosts {
+        __typename
+        ...AdPromotedUserPostCellItemFragment
+    }
+    postsViaText
+    promotedUserPostSubredditName: subredditName
+    subredditImage {
+        __typename
+        ...CellMediaSourceFragment
+    }
+}
+fragment mediaAuthInfoFragment on MediaAuthInfo {
+    authToken
+    authTokenExpiresAt
+    authTokenId
+}
+fragment packagedMediaFragment on PackagedMedia {
+    muxedMp4s {
+        low {
+            url
+        }
+        medium {
+            url
+        }
+        high {
+            url
+        }
+        highest {
+            url
+        }
+        recommended {
+            url
+        }
+    }
+    authInfo @include(if: $includeMediaAuth) {
+        __typename
+        ...mediaAuthInfoFragment
+    }
+}
+fragment LegacyVideoCellFragment on LegacyVideoCell {
+    id
+    media {
+        __typename
+        ...CellMediaSourceFragment
+    }
+    preview {
+        __typename
+        ...CellMediaSourceFragment
+    }
+    isGif
+    packagedMedia @include(if: $includePackagedMedia) {
+        __typename
+        ...packagedMediaFragment
+    }
+    videoAuthInfo @include(if: $includeMediaAuth) {
+        __typename
+        ...mediaAuthInfoFragment
+    }
+    isLiveVideoPostOrCrosspost
+    isAdPost
+    isAutoplayAllowed
+    isVideoButtonExpanded
+    isOverlayControlHidden
+    subredditVisualName
+    videoIdentifier
+    type
+    callToAction
+    title
+    subredditId
+}
+fragment AdSpotlightVideoCellFragment on AdSpotlightVideoCell {
+    id
+    iconPath
+    title
+    details
+    videoCell {
+        __typename
+        ...LegacyVideoCellFragment
+    }
+}
+fragment AdSupplementaryTextCellFragment on AdSupplementaryTextCell {
+    id
+    supplementaryText
+}
+fragment AmaStatusCellFragment on AmaStatusCell {
+    id
+    post {
+        __typename
+        ... on Post {
+            authorInfo {
+                id
+            }
+            isFollowed
+            postEventInfo {
+                eventType
+                startsAt
+                endsAt
+                isLive
+                isEventAdmin
+                remindeesCount
+            }
+        }
+    }
+}
+fragment AwardsCellFragment on AwardsCell {
+    id
+    total
+    iconSources {
+        __typename
+        ...CellMediaSourceFragment
+    }
+}
+fragment ClassicMetadataCellFragment on ClassicMetadataCell {
+    id
+    createdAt
+    subredditName
+    color {
+        __typename
+        ...ColorFragment
+    }
+    iconPath
+    detailsLink
+    isIconDisplayed
+    statusIndicators
+    modUserNoteLabel
+}
+fragment ClassicThumbnailCellFragment on ClassicThumbnailCell {
+    id
+    linkDomain: domain
+    path
+    image {
+        __typename
+        ...CellMediaSourceFragment
+    }
+    isVideo
+}
+fragment FlairCellFragment on FlairCell {
+    id
+    flair {
+        type
+        text
+        richtext
+        textColor
+        template {
+            id
+            isEditable
+            backgroundColor
+            textColor
+            type
+        }
+    }
+}
+fragment ClassicCellFragment on ClassicCell {
+    id
+    titleCell {
+        __typename
+        ...TitleCellFragment
+    }
+    previewTextCell {
+        __typename
+        ...PreviewTextCellFragment
+    }
+    indicatorsCell {
+        __typename
+        ...IndicatorsCellFragment
+    }
+    awardsCell {
+        __typename
+        ...AwardsCellFragment
+    }
+    metadataCell {
+        __typename
+        ...ClassicMetadataCellFragment
+    }
+    thumbnailCell {
+        __typename
+        ...ClassicThumbnailCellFragment
+    }
+    flairCell {
+        __typename
+        ...FlairCellFragment
+    }
+}
+fragment MetadataCellFragment on MetadataCell {
+    id
+    createdAt
+    authorName
+    color {
+        __typename
+        ...ColorFragment
+    }
+    detailsString
+    detailsLink
+    iconPath
+    iconShape
+    isJoinButtonShown
+    joinSubredditId
+    isOverflowButtonHidden
+    mediaPath
+    mediaDomain
+    isRecommended
+    statusIndicators
+    isBrandAffiliate
+    viewCount @include(if: $includeViewCount)
+    modUserNoteLabel
+}
+fragment ContentFragment on Content {
+    markdown
+    richtext
+}
+fragment MediaSourceFragment on MediaSource {
+    url
+    dimensions {
+        width
+        height
+    }
+}
+fragment RedditorFragment on Redditor {
+    id
+    displayName
+    icon {
+        __typename
+        ...MediaSourceFragment
+    }
+    profile {
+        isNsfw
+    }
+    snoovatarIcon {
+        __typename
+        ...MediaSourceFragment
+    }
+}
+fragment DeletedRedditorFragment on DeletedRedditor {
+    id
+    displayName
+}
+fragment UnavailableRedditorFragment on UnavailableRedditor {
+    id
+    displayName
+}
+fragment RedditorInfoFragment on RedditorInfo {
+    __typename
+    ...RedditorFragment
+    ...DeletedRedditorFragment
+    ...UnavailableRedditorFragment
+}
+fragment FeedCommentFragment on Comment {
+    id
+    createdAt
+    content {
+        __typename
+        ...ContentFragment
+    }
+    authorInfo {
+        __typename
+        ...RedditorInfoFragment
+    }
+    score
+    awardings {
+        total
+    }
+}
+fragment FeedDeletedCommentFragment on DeletedComment {
+    id
+}
+fragment CommentInfoFragment on CommentInfo {
+    __typename
+    ...FeedCommentFragment
+    ...FeedDeletedCommentFragment
+}
+fragment CommentTreeFragment on CommentTree {
+    childCount
+    depth
+    parentId
+    node {
+        __typename
+        ...CommentInfoFragment
+    }
+}
+fragment ConversationCellFragment on ConversationCell {
+    id
+    metadataCell {
+        __typename
+        ...MetadataCellFragment
+    }
+    titleCell {
+        __typename
+        ...TitleCellFragment
+    }
+    comments {
+        __typename
+        ...CommentTreeFragment
+    }
+}
+fragment CrosspostCellFragment on CrossPostCell {
+    id
+}
+fragment CustomPostCellFragment on CustomPostCell {
+    id
+    bundle {
+        type
+        encodedData
+    }
+    postConfig {
+        type
+        encodedData
+    }
+    cachedRender {
+        type
+        encodedData
+    }
+    post {
+        __typename
+        id
+        ... on SubredditPost {
+            authorInfo {
+                id
+                displayName
+            }
+            subreddit {
+                id
+                name
+            }
+        }
+    }
+}
+fragment EmptyContentCellFragment on EmptyContentCell {
+    id
+}
+fragment AnalyticsEventPayloadFragment on AnalyticsEventPayload {
+    source
+    action
+    noun
+    actionInfo {
+        reason
+    }
+    postId
+}
+fragment FeedSurveyQuestionFragment on SurveyQuestion {
+    text
+    buttons {
+        text
+        clickAction
+        clickEvent {
+            __typename
+            ...AnalyticsEventPayloadFragment
+        }
+        completionText
+    }
+    viewEvent {
+        __typename
+        ...AnalyticsEventPayloadFragment
+    }
+}
+fragment FeedSurveyCellFragment on FeedSurvey {
+    id
+    surveyId
+    viewEvent {
+        __typename
+        ...AnalyticsEventPayloadFragment
+    }
+    questions {
+        __typename
+        ...FeedSurveyQuestionFragment
+    }
+}
+fragment FullViewVideoCellFragment on FullViewVideoCell {
+    id
+    indicatorsCell {
+        __typename
+        ...IndicatorsCellFragment
+    }
+    mediaTintColor {
+        __typename
+        ...ColorFragment
+    }
+    metadataCell {
+        __typename
+        ...MetadataCellFragment
+    }
+    titleCell {
+        __typename
+        ...TitleCellFragment
+    }
+    videoCell {
+        __typename
+        ...LegacyVideoCellFragment
+    }
+}
+fragment GalleryCellFragment on GalleryCell {
+    id
+    height
+    pages {
+        __typename
+        ...GalleryCellPageFragment
+    }
+}
+fragment GalleryWithLinkFooterCellFragment on GalleryWithLinkFooterCell {
+    id
+    height
+    pages {
+        page {
+            __typename
+            ...GalleryCellPageFragment
+        }
+        footer {
+            outboundUrl
+            caption
+            displayUrl
+        }
+    }
+}
+fragment ImageCellFragment on ImageCell {
+    id
+    media {
+        __typename
+        ...CellMediaSourceFragment
+    }
+}
+fragment LinkCellFragment on LinkCell {
+    id
+    path
+    media {
+        __typename
+        ...CellMediaSourceFragment
+    }
+    domain
+}
+fragment MarginCellFragment on MarginCell {
+    id
+    height
+    color {
+        __typename
+        ... on NativeCellColor {
+            name
+        }
+        ... on CustomCellColor {
+            rgbaColor
+        }
+    }
+}
+fragment MerchandisingUnitCellFragment on MerchandisingUnitCell {
+    id
+    unitId
+    title
+    url
+    format
+    body
+    content {
+        __typename
+        ... on CellMedia {
+            type
+            sourceData {
+                __typename
+                ...CellMediaSourceFragment
+            }
+        }
+        ... on MerchandisingUnitGallery {
+            images {
+                __typename
+                ...GalleryCellPageFragment
+            }
+        }
+    }
+    cta
+}
+fragment MetricCellFragment on MetricCell {
+    id
+    commentCount
+    score
+    isScoreHidden
+}
+fragment authorInfoFragment on RedditorInfo {
+    __typename
+    id
+    ... on Redditor {
+        name
+        isCakeDayNow
+        newIcon: icon(maxWidth: 256) {
+            __typename
+            ...MediaSourceFragment
+        }
+        iconSmall: icon(maxWidth: 50) {
+            __typename
+            ...MediaSourceFragment
+        }
+        snoovatarIcon {
+            __typename
+            ...MediaSourceFragment
+        }
+        profile {
+            isNsfw
+        }
+        accountType
+    }
+    ... on UnavailableRedditor {
+        name
+    }
+    ... on DeletedRedditor {
+        name
+    }
+}
+fragment redditorNameFragment on RedditorInfo {
+    __typename
+    ... on Redditor {
+        id
+        name
+        prefixedName
+        accountType
+        iconSmall: icon(maxWidth: 50) {
+            url
+        }
+        snoovatarIcon {
+            url
+        }
+    }
+    ... on UnavailableRedditor {
+        id
+        name
+    }
+    ... on DeletedRedditor {
+        id
+        name
+    }
+}
+fragment modReportsFragment on ModerationInfo {
+    modReports {
+        reason
+        authorInfo {
+            __typename
+            ...redditorNameFragment
+        }
+    }
+}
+fragment userReportsFragment on ModerationInfo {
+    userReports {
+        reason
+        count
+    }
+}
+fragment modQueueReasonsFragment on ModerationInfo {
+    modQueueReasons {
+        __typename
+        ... on ModQueueReasonReport {
+            title
+            description {
+                markdown
+                richtext
+                preview
+            }
+            icon
+        }
+        ... on ModQueueReasonModReport {
+            title
+            description {
+                markdown
+                richtext
+                preview
+            }
+            icon
+            actor {
+                __typename
+                ... on Redditor {
+                    icon {
+                        __typename
+                        ...MediaSourceFragment
+                    }
+                    iconSmall: icon(maxWidth: 50) {
+                        __typename
+                        ...MediaSourceFragment
+                    }
+                    snoovatarIcon {
+                        __typename
+                        ...MediaSourceFragment
+                    }
+                }
+                id
+                displayName
+            }
+        }
+        ... on ModQueueReasonUserReport {
+            title
+            description {
+                markdown
+                richtext
+                preview
+            }
+            icon
+        }
+        ... on ModQueueReasonFilter {
+            title
+            description {
+                markdown
+                richtext
+                preview
+            }
+            icon
+            confidence {
+                confidenceLevel
+                confidenceLevelText
+            }
+            isSafetyFilter
+        }
+    }
+}
+fragment modQueueTriggersFragment on ModerationInfo {
+    modQueueTriggers {
+        type
+        message
+        details {
+            __typename
+            ... on BanEvasionTriggerDetails {
+                confidence
+                recencyExplanation {
+                    markdown
+                    richtext
+                }
+                confidenceExplanation {
+                    markdown
+                }
+            }
+        }
+    }
+}
+fragment ModeratorActionCellFragment on ModeratorActionCell {
+    post {
+        __typename
+        ... on SubredditPost {
+            id
+            title
+            distinguishedAs
+            isOwnPost
+            authorInfo {
+                __typename
+                id
+                ...authorInfoFragment
+            }
+            subreddit {
+                id
+                name
+            }
+            moderationInfo {
+                __typename
+                verdict
+                verdictByRedditorInfo {
+                    __typename
+                    ...authorInfoFragment
+                }
+                banReason
+                reportCount
+                ...modReportsFragment
+                ...userReportsFragment
+                ...modQueueReasonsFragment
+                ...modQueueTriggersFragment
+            }
+        }
+    }
+}
+fragment NewsMetadataCellFragment on NewsMetadataCell {
+    id
+    createdAtOptional: createdAt
+    topic
+    subredditName
+    isBrandAffiliate
+}
+fragment NewsProfileMetadataCellFragment on NewsProfileMetadataCell {
+    id
+    createdAtOptional: createdAt
+    username
+    link
+    isBrandAffiliate
+}
+fragment PinnedPostsHeaderCellFragment on PinnedPostHeadersCell {
+    id
+    isInitiallyExpanded
+    pinnedPostsCount
+}
+fragment PinnedPostsTitleCellFragment on PinnedPostTitleCell {
+    id
+    post {
+        id
+        title
+        createdAt
+        editedAt
+    }
+}
+fragment PinnedPostsTitleWithThumbnailCellFragment on PinnedPostTitleWithThumbnailCell {
+    id
+    post {
+        __typename
+        id
+        title
+        createdAt
+        isNsfw
+        ... on SubredditPost {
+            thumbnailV2 {
+                attribution
+                isObfuscatedDefault
+                obfuscatedImage {
+                    url
+                }
+                image {
+                    url
+                }
+            }
+        }
+    }
+}
+fragment RichtextRecommendationContextCellFragment on RichtextRecommendationContextCell {
+    id
+    rtJsonText
+}
+fragment SortCellFragment on SortCell {
+    isModerator
+    layoutOptions
+}
+fragment TitleWithThumbnailCollapsedCellFragment on TitleWithThumbnailCollapsedCell {
+    id
+    titleCell {
+        __typename
+        ...TitleCellFragment
+    }
+    thumbnail {
+        __typename
+        ... on CellMedia {
+            type
+            sourceData {
+                __typename
+                ...CellMediaSourceFragment
+            }
+        }
+        ... on LinkCell {
+            __typename
+            ...LinkCellFragment
+        }
+    }
+    indicatorsCell {
+        __typename
+        ...IndicatorsCellFragment
+    }
+}
+fragment TitleWithThumbnailCellFragment on TitleWithThumbnailCell {
+    id
+    titleCell {
+        __typename
+        ...TitleCellFragment
+    }
+    thumbnail {
+        __typename
+        ... on CellMedia {
+            type
+            sourceData {
+                __typename
+                ...CellMediaSourceFragment
+            }
+        }
+        ... on LinkCell {
+            __typename
+            ...LinkCellFragment
+        }
+    }
+    previewTextCell {
+        __typename
+        ...PreviewTextCellFragment
+    }
+    indicatorsCell {
+        __typename
+        ...IndicatorsCellFragment
+    }
+}
+fragment TrendingCarouselCellItemFragment on TrendingCarouselCellItem {
+    title
+    query
+    image {
+        __typename
+        ...CellMediaSourceFragment
+    }
+    adPostId
+    payload {
+        __typename
+        ...AdPayloadFragment
+    }
+}
+fragment TrendingCarouselCellFragment on TrendingCarouselCell {
+    id
+    title
+    items {
+        __typename
+        ...TrendingCarouselCellItemFragment
+    }
+}
+fragment YoutubeCellFragment on YoutubeCell {
+    id
+    video {
+        __typename
+        ...CellMediaSourceFragment
+    }
+    preview {
+        __typename
+        ...CellMediaSourceFragment
+    }
+    title
+    createdAt
+    isAdPost
+}
+fragment CellGroupFragment on CellGroup {
+    adPayload {
+        __typename
+        ...AdPayloadFragment
+    }
+    groupRecommendationContext: recommendationContext {
+        __typename
+        ...RecommendationContextFragment
+    }
+    cells {
+        __typename
+        ...ActionCellFragment
+        ...AdBrandSurveyCellFragment
+        ...AdFreeFormCellFragment
+        ...AdGalleryCellFragment
+        ...AdLlmPostSuggestionsCellFragment
+        ...AdMetadataCellFragment
+        ...AdPromotedCommunityPostCellFragment
+        ...AdPromotedUserPostCollectionCellFragment
+        ...AdSpotlightVideoCellFragment
+        ...AdSupplementaryTextCellFragment
+        ...AppInstallCallToActionCellFragment
+        ...AmaStatusCellFragment
+        ...AwardsCellFragment
+        ...CallToActionCellFragment
+        ...ClassicCellFragment
+        ...ClassicMetadataCellFragment
+        ...ClassicThumbnailCellFragment
+        ...ConversationCellFragment
+        ...CrosspostCellFragment
+        ...CustomPostCellFragment
+        ...EmptyContentCellFragment
+        ...FeedSurveyCellFragment
+        ...FlairCellFragment
+        ...FullViewVideoCellFragment
+        ...GalleryCellFragment
+        ...GalleryWithLinkFooterCellFragment
+        ...ImageCellFragment
+        ...IndicatorsCellFragment
+        ...LegacyVideoCellFragment
+        ...LinkCellFragment
+        ...MarginCellFragment
+        ...MerchandisingUnitCellFragment
+        ...MetadataCellFragment
+        ...MetricCellFragment
+        ...ModeratorActionCellFragment
+        ...NewsMetadataCellFragment
+        ...NewsProfileMetadataCellFragment
+        ...PinnedPostsHeaderCellFragment
+        ...PinnedPostsTitleCellFragment
+        ...PinnedPostsTitleWithThumbnailCellFragment
+        ...PreviewTextCellFragment
+        ...RichtextRecommendationContextCellFragment
+        ...SortCellFragment
+        ...TitleCellFragment
+        ...TitleWithThumbnailCollapsedCellFragment
+        ...TitleWithThumbnailCellFragment
+        ...TrendingCarouselCellFragment
+        ...YoutubeCellFragment
+    }
+}
+fragment AmaCarouselFragment on AmaCarouselFeedUnit {
+    id
+    posts {
+        __typename
+        id
+        title
+        ... on Post {
+            content {
+                richtextMedia {
+                    __typename
+                    ... on ImageAsset {
+                        url
+                        width
+                        height
+                    }
+                }
+            }
+            authorInfo {
+                __typename
+                id
+                displayName
+                ... on Redditor {
+                    icon {
+                        url
+                    }
+                }
+            }
+            postEventInfo {
+                eventType
+                startsAt
+                endsAt
+                isLive
+                isEventAdmin
+            }
+        }
+        ... on SubredditPost {
+            subreddit {
+                id
+                styles {
+                    icon
+                    legacyIcon {
+                        url
+                    }
+                }
+                prefixedName
+            }
+        }
+    }
+}
+fragment PostRecommendationContextFragment on PostRecommendation {
+    id
+    recommendationContext {
+        __typename
+        typeIdentifier
+        ... on InterestTopicRecommendationContext {
+            interestTopicNode {
+                id
+                topic {
+                    name
+                    title
+                }
+            }
+        }
+        ... on SimilarSubredditRecommendationContext {
+            subreddit {
+                __typename
+                id
+                ... on Subreddit {
+                    name
+                    prefixedName
+                }
+            }
+        }
+        ... on TimeOnSubredditRecommendationContext {
+            subreddit {
+                __typename
+                id
+                ... on Subreddit {
+                    name
+                    prefixedName
+                }
+            }
+        }
+        ... on OnboardingPracticeFeedRecommendationContext {
+            interestTopicNode {
+                id
+                topic {
+                    name
+                    title
+                }
+            }
+        }
+        ... on InactiveCommunityDiscoveryRecommendationContext {
+            discoverTopic {
+                name
+                slug
+            }
+        }
+        ... on FunnyRecommendationContext {
+            discoverTopic {
+                slug
+                name
+            }
+        }
+    }
+}
+fragment CarouselCommunityRecommendationsFragment on CarouselCommunityRecommendationsFeedUnit {
+    id
+    model
+    title
+    version
+    destination {
+        __typename
+        ... on TopicDestination {
+            topic {
+                id
+                displayName
+            }
+            schemeName
+        }
+        ... on UnavailableDestination {
+            reason
+        }
+        ... on SubredditListDestination {
+            subredditIds
+        }
+    }
+    communityRecommendations {
+        recommendationSource
+        subreddit {
+            name
+            id
+            prefixedName
+            publicDescriptionText
+            title
+            subscribersCount
+            isSubscribed
+            styles {
+                icon
+                primaryColor
+                legacyIcon {
+                    url
+                }
+                legacyPrimaryColor
+            }
+            taxonomy {
+                generatedDescription
+            }
+        }
+    }
+}
+fragment ListStyleCommunityRecommendationsFragment on ListStyleCommunityRecommendationsFeedUnit {
+    id
+    model
+    title
+    version
+    destination {
+        __typename
+        ... on TopicDestination {
+            topic {
+                id
+                displayName
+            }
+            schemeName
+        }
+        ... on UnavailableDestination {
+            reason
+        }
+        ... on SubredditListDestination {
+            subredditIds
+        }
+    }
+    communityRecommendations {
+        recommendationSource
+        subreddit {
+            __typename
+            ... on Subreddit {
+                name
+                id
+                prefixedName
+                publicDescriptionText
+                postsIn7Days
+                title
+                subscribersCount
+                isSubscribed
+                styles {
+                    icon
+                    primaryColor
+                    legacyIcon {
+                        url
+                    }
+                    legacyPrimaryColor
+                }
+                taxonomy {
+                    generatedDescription
+                }
+            }
+        }
+    }
+}
+fragment imageAssetFragment on ImageAsset {
+    __typename
+    id
+    status
+    mimetype
+    width
+    height
+    url
+    small: preview(maxWidth: 108) {
+        __typename
+        ...MediaSourceFragment
+    }
+    medium: preview(maxWidth: 216) {
+        __typename
+        ...MediaSourceFragment
+    }
+    large: preview(maxWidth: 320) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xlarge: preview(maxWidth: 640) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xxlarge: preview(maxWidth: 960) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xxxlarge: preview(maxWidth: 1080) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_small: preview(maxWidth: 108, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_medium: preview(maxWidth: 216, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_large: preview(maxWidth: 320, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xlarge: preview(maxWidth: 640, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xxlarge: preview(maxWidth: 960, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xxxlarge: preview(maxWidth: 1080, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+}
+fragment animatedImageAssetFragment on AnimatedImageAsset {
+    __typename
+    id
+    status
+    mimetype
+    width
+    height
+    url
+    small: preview(maxWidth: 108) {
+        __typename
+        ...MediaSourceFragment
+    }
+    medium: preview(maxWidth: 216) {
+        __typename
+        ...MediaSourceFragment
+    }
+    large: preview(maxWidth: 320) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xlarge: preview(maxWidth: 640) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xxlarge: preview(maxWidth: 960) {
+        __typename
+        ...MediaSourceFragment
+    }
+    xxxlarge: preview(maxWidth: 1080) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_small: preview(maxWidth: 108, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_medium: preview(maxWidth: 216, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_large: preview(maxWidth: 320, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xlarge: preview(maxWidth: 640, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xxlarge: preview(maxWidth: 960, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+    obfuscated_xxxlarge: preview(maxWidth: 1080, obfuscate: true) {
+        __typename
+        ...MediaSourceFragment
+    }
+}
+fragment avatarExpressionMediaAssetFragment on MediaAsset {
+    __typename
+    ... on ExpressionMediaAsset {
+        avatar {
+            id
+            fullImage {
+                url
+            }
+        }
+        expression {
+            id
+            name
+            assets {
+                image {
+                    url
+                }
+                layer
+            }
+            size
+            position
+            perspective
+        }
+    }
+}
+fragment mediaAssetFragment on MediaAsset {
+    __typename
+    id
+    userId
+    mimetype
+    width
+    height
+    ... on VideoAsset {
+        dashUrl
+        hlsUrl
+        status @include(if: $includeExtendedVideoAsset)
+        packagedMedia @include(if: $includeExtendedVideoAsset) {
+            __typename
+            ...packagedMediaFragment
+        }
+        still @include(if: $includeExtendedVideoAsset) {
+            content {
+                url
+                dimensions {
+                    width
+                    height
+                }
+            }
+        }
+        authInfo @include(if: $includeMediaAuth) {
+            __typename
+            ...mediaAuthInfoFragment
+        }
+    }
+    ...imageAssetFragment
+    ...animatedImageAssetFragment
+    ...avatarExpressionMediaAssetFragment
+}
+fragment postGalleryItemFragment on PostGalleryItem {
+    id
+    caption
+    subcaptionStrikethrough
+    outboundUrl
+    callToAction
+    displayAddress
+    adEvents {
+        type
+        url
+        encryptedTrackingId @include(if: $includeNewPixelTrackingFields)
+    }
+    media {
+        __typename
+        ...mediaAssetFragment
+    }
+}
+fragment CompactPostCommunityRecommendationsFragment on CompactPostCommunityRecommendationsFeedUnit {
+    id
+    model
+    title
+    version
+    destination {
+        __typename
+        ... on TopicDestination {
+            topic {
+                id
+                displayName
+            }
+            schemeName
+        }
+        ... on UnavailableDestination {
+            reason
+        }
+        ... on SubredditListDestination {
+            subredditIds
+        }
+    }
+    communityRecommendations {
+        recommendationSource
+        subreddit {
+            __typename
+            ... on Subreddit {
+                name
+                id
+                prefixedName
+                publicDescriptionText
+                title
+                subscribersCount
+                isSubscribed
+                styles {
+                    icon
+                    primaryColor
+                    legacyIcon {
+                        url
+                    }
+                    legacyPrimaryColor
+                }
+                taxonomy {
+                    generatedDescription
+                }
+            }
+        }
+        posts {
+            edges {
+                node {
+                    id
+                    title
+                    commentCount
+                    score
+                    url
+                    domain
+                    thumbnail {
+                        url
+                        dimensions {
+                            height
+                            width
+                        }
+                    }
+                    media {
+                        still {
+                            content(maxWidth: 216) {
+                                url
+                                dimensions {
+                                    width
+                                    height
+                                }
+                            }
+                        }
+                        typeHint
+                    }
+                    gallery {
+                        items {
+                            __typename
+                            ...postGalleryItemFragment
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+fragment CardPostCommunityRecommendationsFragment on CardPostCommunityRecommendationsFeedUnit {
+    id
+    model
+    title
+    version
+    destination {
+        __typename
+        ... on TopicDestination {
+            topic {
+                id
+                displayName
+            }
+            schemeName
+        }
+        ... on UnavailableDestination {
+            reason
+        }
+        ... on SubredditListDestination {
+            subredditIds
+        }
+    }
+    communityRecommendations {
+        recommendationSource
+        subreddit {
+            __typename
+            ... on Subreddit {
+                name
+                id
+                prefixedName
+                publicDescriptionText
+                title
+                subscribersCount
+                isSubscribed
+                styles {
+                    icon
+                    primaryColor
+                    legacyIcon {
+                        url
+                    }
+                    legacyPrimaryColor
+                }
+                taxonomy {
+                    generatedDescription
+                }
+            }
+        }
+        posts {
+            edges {
+                node {
+                    id
+                    title
+                    commentCount
+                    score
+                    url
+                    domain
+                    thumbnailV2(maxWidth: 640) {
+                        image {
+                            url
+                            dimensions {
+                                width
+                                height
+                            }
+                        }
+                    }
+                    media {
+                        still {
+                            content(maxWidth: 640) {
+                                url
+                                dimensions {
+                                    width
+                                    height
+                                }
+                            }
+                        }
+                        typeHint
+                    }
+                    gallery {
+                        items {
+                            __typename
+                            ...postGalleryItemFragment
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+fragment ChatChannelSubredditInfoFragment on SubredditInfo {
+    __typename
+    id
+    name
+    ... on Subreddit {
+        isNsfw
+        styles {
+            icon
+            primaryColor
+            legacyIcon {
+                url
+            }
+            legacyPrimaryColor
+        }
+    }
+}
+fragment ChatChannelMessageFragment on ChatMessageInterface {
+    __typename
+    id
+    createdAt
+    sender {
+        __typename
+        id
+        displayName
+        ... on Redditor {
+            icon {
+                __typename
+                ...MediaSourceFragment
+            }
+            snoovatarIcon {
+                __typename
+                ...MediaSourceFragment
+            }
+            profile {
+                isNsfw
+            }
+        }
+    }
+    ... on ChatChannelTextMessage {
+        text
+    }
+    ... on ChatChannelImageMessage {
+        source {
+            __typename
+            ...MediaSourceFragment
+        }
+        blurredSource {
+            __typename
+            ...MediaSourceFragment
+        }
+    }
+}
+fragment ChatChannelFeedUnitFragment on ChatChannelFeedUnit {
+    id
+    analyticsInfo {
+        recommendationAlgorithm
+    }
+    channel {
+        id
+        name
+        permalink
+        roomId
+        subreddit {
+            __typename
+            ...ChatChannelSubredditInfoFragment
+        }
+        activeUsersCount
+    }
+    chatMessages {
+        __typename
+        ...ChatChannelMessageFragment
+    }
+}
+fragment ChatChannelTopicFragment on UserChatChannel {
+    taggedTopics {
+        name
+    }
+}
+fragment ChatChannelUCCFragment on UserChatChannel {
+    __typename
+    id
+    roomId
+    name
+    permalink
+    icon
+    description
+    activeUsersCount
+    recentMessagesCount
+    ...ChatChannelTopicFragment
+}
+fragment ChatChannelSCCv2Fragment on SubredditChatChannelV2 {
+    id
+    roomId
+    name
+    permalink
+    icon
+    description
+    activeUsersCount
+    recentMessagesCount
+    subreddit {
+        __typename
+        ...ChatChannelSubredditInfoFragment
+    }
+}
+fragment ChatChannelFeedUnitV2Fragment on ChatChannelFeedUnitV2 {
+    id
+    analyticsInfo {
+        recommendationAlgorithm
+    }
+    chatRecommendation {
+        channel {
+            __typename
+            ...ChatChannelUCCFragment
+            ...ChatChannelSCCv2Fragment
+        }
+        recommendationContext {
+            recommendationSource
+            seedSubreddit {
+                __typename
+                ...ChatChannelSubredditInfoFragment
+            }
+        }
+    }
+    chatMessages {
+        __typename
+        ...ChatChannelMessageFragment
+    }
+}
+fragment ChatChannelsFeedUnitFragment on ChatChannelsFeedUnit {
+    id
+    analyticsInfo {
+        recommendationAlgorithm
+    }
+    chatRecommendations {
+        channel {
+            __typename
+            ...ChatChannelUCCFragment
+            ...ChatChannelSCCv2Fragment
+        }
+    }
+}
+fragment TaxonomyTopicsFeedElementFragment on TaxonomyTopicsFeedElement {
+    title
+    schemeName
+    topics {
+        id
+        displayName
+    }
+}
+fragment ExploreFeaturedItemsFragment on ExploreFeaturedItemsFeedElement {
+    title
+    schemeName
+    items {
+        __typename
+        cardImage {
+            url
+        }
+        ... on SubredditExploreFeaturedItem {
+            title
+            subreddit {
+                __typename
+                id
+                name
+                ... on Subreddit {
+                    title
+                    subscribersCount
+                    isSubscribed
+                    styles {
+                        icon
+                        primaryColor
+                        legacyIcon {
+                            url
+                        }
+                        legacyPrimaryColor
+                    }
+                    publicDescriptionText
+                    taxonomy {
+                        generatedDescription
+                    }
+                }
+            }
+        }
+    }
+}
+fragment TopicPillsGroupFragment on TopicGroupFeedElement {
+    title
+    schemeName
+    displayStyle
+    topics {
+        id
+        displayName
+    }
+}
+fragment RankedCommunityFragment on RankedCommunityFeedElement {
+    rank
+    subreddit {
+        __typename
+        id
+        name
+        ... on Subreddit {
+            title
+            subscribersCount
+            isSubscribed
+            styles {
+                icon
+                primaryColor
+                legacyIcon {
+                    url
+                }
+                legacyPrimaryColor
+            }
+            publicDescriptionText
+            taxonomy {
+                generatedDescription
+            }
+        }
+    }
+}
+fragment CarouselComponentSubredditInfoFragment on SubredditPost {
+    subreddit {
+        id
+        name
+        prefixedName
+        styles {
+            legacyIcon {
+                url
+            }
+            icon
+        }
+    }
+}
+fragment CarouselPostInfoFragment on PostInfo {
+    __typename
+    title
+    id
+    createdAt
+    score
+    commentCount
+    ... on Post {
+        __typename
+        ...CarouselComponentSubredditInfoFragment
+        gallery {
+            items {
+                media {
+                    __typename
+                    ... on ImageAsset {
+                        url
+                    }
+                }
+            }
+        }
+        media {
+            typeHint
+        }
+        thumbnailV2 {
+            image {
+                url
+            }
+        }
+    }
+}
+fragment PostCarouselFragment on PostCarousel {
+    id
+    type
+    uxTargetingExperience
+    uxVariantId
+    carouselTitle: title
+    carouselPosts: posts {
+        __typename
+        ... on CarouselTextPostComponent {
+            post {
+                __typename
+                ...CarouselPostInfoFragment
+            }
+        }
+        ... on CarouselThumbnailPostComponent {
+            post {
+                __typename
+                ...CarouselPostInfoFragment
+            }
+        }
+    }
+}
+fragment FeedElementEdgeFragment on FeedElementEdge {
+    node {
+        __typename
+        id
+        ... on CellGroup {
+            __typename
+            groupId
+            payload
+            ...CellGroupFragment
+            crosspostCells: cells {
+                __typename
+                ... on CrossPostCell {
+                    innerPost {
+                        __typename
+                        id
+                        groupId
+                        ...CellGroupFragment
+                    }
+                }
+            }
+        }
+        ...AmaCarouselFragment
+        ...PostRecommendationContextFragment
+        ...CarouselCommunityRecommendationsFragment
+            @include(if: $includeCarouselRecommendations)
+        ...ListStyleCommunityRecommendationsFragment
+            @include(if: $includeListStyleRecommendations)
+        ...CompactPostCommunityRecommendationsFragment
+            @include(if: $includeCompactPostStyleRecommendations)
+        ...CardPostCommunityRecommendationsFragment
+            @include(if: $includeCardPostStyleRecommendations)
+        ...ChatChannelFeedUnitFragment @include(if: $includeChatChannelFeedUnit)
+        ...ChatChannelFeedUnitV2Fragment
+            @include(if: $includeChatChannelFeedUnit)
+        ...ChatChannelsFeedUnitFragment
+            @include(if: $includeChatChannelFeedUnit)
+        ...TaxonomyTopicsFeedElementFragment
+            @include(if: $includeTaxonomyTopicsFeedElement)
+        ...ExploreFeaturedItemsFragment
+            @include(if: $includeExploreFeaturedItemsFeedElement)
+        ...TopicPillsGroupFragment @include(if: $includeTopicGroupFeedElement)
+        ...RankedCommunityFragment
+            @include(if: $includeRankedCommunityFeedElement)
+        ...PostCarouselFragment @include(if: $includeNewInCommunitiesCarousel)
+    }
+}
