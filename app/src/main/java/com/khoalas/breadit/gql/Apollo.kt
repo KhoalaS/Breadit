@@ -1,5 +1,6 @@
 package com.khoalas.breadit.gql
 
+import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.ApolloResponse
 import com.apollographql.apollo.api.Query
@@ -41,12 +42,23 @@ class AuthorizationInterceptor(private val auth: AuthRepository) : Interceptor {
     }
 }
 
-// TODO logging
 suspend fun <D : Query.Data> makeApolloRequest(
     client: ApolloClient,
     query: Query<D>
 ): ApolloResponse<D> {
-    return client.query(query).addHttpHeader("x-apollo-operation-name", query.name())
+    val response = client.query(query).addHttpHeader("x-apollo-operation-name", query.name())
         .addHttpHeader("x-apollo-operation-id", query.id())
         .addHttpHeader("x-reddit-compression", "1").execute()
+
+    response.errors?.let {
+        it.forEach { err ->
+            Log.e("makeApolloRequest", err.message)
+        }
+    }
+
+    response.exception?.let {
+        Log.e("makeApolloRequest", it.message ?: "Exception at ${query.name()}")
+    }
+
+    return response
 }
