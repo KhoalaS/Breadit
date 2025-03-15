@@ -43,6 +43,8 @@ android {
 }
 
 dependencies {
+    // Appyx
+    implementation(libs.bumble.appyx)
 
     // Navigation
     implementation(libs.androidx.navigation)

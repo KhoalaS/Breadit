@@ -16,9 +16,10 @@ apollo = "4.1.1"
 nav = "2.8.7"
 coil = "3.1.0"
 androidx-hilt = "1.2.0"
+appyx = "1.6.0"
 
 [libraries]
-
+bumble-appyx = { group = "com.bumble.appyx", name = "core", version.ref = "appyx"}
 coil3-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil3-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apollo" }
