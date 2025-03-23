@@ -1,5 +1,8 @@
 type Query {
     subredditInfoByName(name: String): Subreddit
+    subredditV3(name: String,
+        adContext: AdContextInput,
+        feedContext: FeedContextInput): SubredditV3
 }
 
 directive @checkGatedSubredditStatus (
@@ -523,6 +526,323 @@ type Edge {
 type Node {
     id: String
 }
+
+# SubredditFeedSdui
+
+input AdContextInput {
+    layout: AdLayout
+}
+
+# TODO
+input FeedContextInput {
+    layout: FeedLayout
+}
+
+type SubredditV3 {
+    elements(sort: PostFeedSort, time: PostFeedRange, after: String): SubredditV3Elements
+}
+
+type SubredditV3Elements {
+    dist: Int
+    pageInfo: PageInfo
+    edges: [FeedElementEdge]
+}
+
+type PageInfo {
+    endCursor: String
+}
+
+type FeedElementEdge {
+    node : CellGroup
+}
+
+type CellGroup {
+    id: String
+    groupId: String
+    payload: CellPayload
+    adPayload: AdPayload
+}
+
+type CrossPostCell {
+    innerPost : CellGroup
+}
+
+type CellPayload {
+
+}
+
+type YoutubeCell {
+    id: String
+    video: CellMediaSource
+    preview: CellMediaSource
+    title: String
+    createdAt: String
+    isAdPost: Boolean
+}
+
+# TODO inconclusive ctaMediaColor,AdEventMetadata
+
+type AdPayload {
+    adLinkUrl: String
+    ctaMediaColor: String
+    promoLayout: PromoLayout
+    adInstanceId: String
+    domain: String
+    isCreatedFromAdsUi: Boolean
+    callToAction: String
+    impressionId: String
+    isBlankAd: Boolean
+    isSurveyAd: Boolean
+    isInAppBrowserOverride: Boolean
+    isVideo: Boolean
+    adEvents: [AdEvent]
+    encryptedTrackingPayload: String
+    additionalEventMetadata: AdEventMetadata
+    appStoreData: AppStoreData
+    campaign: AdCampaign
+    adUserTargeting: AdUserTargeting
+    gallery: AdGallery
+    formatData: AdFormatData
+    excludedExperiments: [Experiment]
+}
+
+type Experiment {
+
+}
+
+type AdFormatData {
+    id: String
+    leadGenerationInformation: AdLeadGenerationInformation
+}
+
+type FormField {
+    fieldType: String
+    isRequired: Boolean
+}
+
+# TODO collectableUserInformation
+
+type AdLeadGenerationInformation {
+    leadFormFields: [FormField]
+    collectableUserInformation: String
+    privacyPolicyUrl: String
+    prompt: String
+    disclaimerRichtext: String
+    formId: String
+    advertiserLegalName: String
+    publicEncryptionKey: String
+}
+
+type AdGallery {
+    caption: String
+    outboundUrl: String
+    displayAddress: String
+    callToAction: String
+    adEvents: [AdEvent]
+}
+
+type AdUserTargeting {
+    interests: [String]
+    gender: AccountGenderCategory
+    locations: String
+    targetingCriteria: [AdTargetingCriteria]
+}
+
+type AdEvent {
+    type: AdEventType
+    url: String
+    encryptedTrackingId: String
+}
+
+# TODO inconclusive appRating, need to see an app ad
+
+type AppStoreData {
+    appName: String
+    appIcon: String
+    category: String
+    downloadCount: Int
+    appRating: String
+}
+
+type AdCampaign {
+    id: String
+}
+
+type AdEventMetadata {
+
+}
+
+type RecommendationContext {
+    typeIdentifier: String
+    typeName: String
+    sourceId: String
+    name: String
+    isContextHidden: Boolean
+    richText: String
+}
+
+type ActionCell {
+    id: String
+    isScoreHidden: Boolean
+    isModeratable: Boolean
+    commentCount: Int
+    shareImagePath: String
+    isAwardHidden: Boolean
+    score: Int
+    voteState: VoteState
+    shareCount: Int
+    isTranslatable: Boolean
+    isTranslated: Boolean
+    viewCount: Int
+    goldenUpvoteInfo: GoldenUpvoteInfo
+}
+
+type GoldenUpvoteInfo {
+    countTotal: Int
+    countByCurrentUser: Int
+    isGildable: Boolean
+    icon: Url
+    promos: [Promo]
+}
+
+type Promo {
+    id: String
+    promoType: EconPromoType
+}
+
+type AdBrandSurveyCell {
+    id: String
+    surveyUrl: String
+}
+
+type TitleCell {
+    id: String
+    title: String
+    isVisited: Boolean
+}
+
+type CellMediaSource {
+    path: String
+    isObfuscated: Boolean
+    obfuscatedPath: String
+    size: MediaDimensions
+}
+
+type PreviewTextCell {
+    id: String
+    text: String
+    numberOfLines: Int
+    isRead: Boolean
+}
+
+type AdFreeFormCell {
+    id: String
+    titleCell: TitleCell
+    previewTextCell: PreviewTextCell
+}
+
+type ImageCell {
+    id: String
+    media: CellMediaSource
+}
+
+type GalleryCellPage {
+    image: CellMediaSource
+}
+
+type CallToActionCell {
+    id: String
+    callToAction: String
+    outboundUrl: String
+    displayAddress: String
+    caption: String
+    subcaption: String
+    subcaptionStrikethrough: String
+}
+
+type AdMetadataCell {
+    id: String
+    createdAt: String
+    authorName: String
+    color: CellColor
+    iconPath: String
+    isAuthorBrand: Boolean
+}
+
+type NativeCellColor {
+    name: NativeCellColorName
+}
+
+type CustomCellColor {
+    rgbaColor: String
+}
+
+union CellColor = NativeCellColor|CustomCellColor
+
+type AdSupplementaryTextCell {
+    id: String
+    supplementaryText: String
+}
+
+type LegacyVideoCell {
+    id: String
+    media: CellMediaSource
+    preview: CellMediaSource
+    isGif: Boolean
+    packagedMedia: PackagedMedia
+    videoAuthInfo: MediaAuthInfo
+    isLiveVideoPostOrCrosspost: Boolean
+    isAdPost: Boolean
+    isAutoplayAllowed: Boolean
+    isVideoButtonExpanded: Boolean
+    isOverlayControlHidden: Boolean
+    subredditVisualName: String
+    videoIdentifier: String
+    type: CellVideoType
+    callToAction: String
+    title: String
+    subredditId: String
+}
+
+type AppInstallCallToActionCell {
+    id: String
+    appStoreInfo: AppStoreInfo
+    callToActionString: String
+}
+
+type AppStoreInfo {
+    appName: String
+    appIcon: String
+    appRating: String
+    category: String
+    downloadCount: Int
+}
+
+type AuthorInfo {
+    id: String
+}
+
+type Post {
+    authorInfo: AuthorInfo
+    isFollowed: Boolean
+    postEventInfo: PostEventInfo
+}
+
+type PostEventInfo  {
+    eventType: PostEventType
+    startsAt: String
+    endsAt: String
+    isLive: Boolean
+    isEventAdmin: Boolean
+    remindeesCount: Int
+}
+
+type AmaStatusCell {
+    id: String
+    post: Post
+}
+
+# ENUMS
 
 enum ReportFormEntryPoint {
     REPORT_PAGE
