@@ -16,10 +16,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,8 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumble.appyx.core.integration.NodeHost
+import com.bumble.appyx.core.integrationpoint.NodeActivity
+import com.bumble.appyx.core.integrationpoint.NodeComponentActivity
+import com.khoalas.breadit.ui.nav.bottom.RootNode
 import com.khoalas.breadit.ui.screens.LoginScreen
-import com.khoalas.breadit.ui.screens.SubredditAboutScreen
 import com.khoalas.breadit.ui.screens.SubredditScreen
 import com.khoalas.breadit.ui.theme.BreaditTheme
 import com.khoalas.breadit.viemodel.AuthViewModel
@@ -41,7 +41,7 @@ import com.khoalas.breadit.viemodel.state.LoginState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : NodeComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -49,46 +49,9 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val loginState by authViewModel.loginState.collectAsState()
-
             BreaditTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
-                    if (loginState == LoginState.LOGGED_IN){
-                        var selectedItem by rememberSaveable { mutableIntStateOf(0) }
-                        val items = listOf("Home", "Messages")
-                        val iconsFilled = listOf(Icons.Filled.Home, Icons.Filled.Email)
-                        val iconsOutline = listOf(Icons.Outlined.Home, Icons.Outlined.Email)
-
-                        NavigationBar() {
-                            items.forEachIndexed { index, item ->
-                                NavigationBarItem(
-                                    selected = selectedItem == index,
-                                    onClick = { selectedItem = index },
-                                    icon = {
-                                        Icon(
-                                            if (selectedItem == index) iconsFilled[index] else iconsOutline[index],
-                                            contentDescription = item
-                                        )
-                                    },
-                                    label = {
-                                        Text(item)
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }) { innerPadding ->
-                    Column(
-                        modifier = Modifier.padding(innerPadding).fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        when (loginState) {
-                            is LoginState.LOADING -> LoadingSpinner()
-                            is LoginState.LOGGED_IN -> SubredditScreen()
-                            is LoginState.LOGGED_OUT -> LoginScreen()
-                        }
-                    }
+                NodeHost(integrationPoint = appyxV1IntegrationPoint, modifier = Modifier.fillMaxSize()) {
+                    RootNode(buildContext = it, authViewModel)
                 }
             }
         }
