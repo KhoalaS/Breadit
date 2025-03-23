@@ -49,32 +49,9 @@ class MainActivity : NodeComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
-            val loginState by authViewModel.loginState.collectAsState()
-
             BreaditTheme {
-                Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
-                    if (loginState == LoginState.LOGGED_IN){
-                        var selectedItem by rememberSaveable { mutableIntStateOf(0) }
-                        val items = listOf("Home", "Messages")
-                        val iconsFilled = listOf(Icons.Filled.Home, Icons.Filled.Email)
-                        val iconsOutline = listOf(Icons.Outlined.Home, Icons.Outlined.Email)
-
-                        NodeHost(integrationPoint = appyxV1IntegrationPoint) {
-                            RootNode(buildContext = it)
-                        }
-                    }
-                }) { innerPadding ->
-                    Column(
-                        modifier = Modifier.padding(innerPadding).fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        when (loginState) {
-                            is LoginState.LOADING -> LoadingSpinner()
-                            is LoginState.LOGGED_IN -> SubredditScreen()
-                            is LoginState.LOGGED_OUT -> LoginScreen()
-                        }
-                    }
+                NodeHost(integrationPoint = appyxV1IntegrationPoint, modifier = Modifier.fillMaxSize()) {
+                    RootNode(buildContext = it, authViewModel)
                 }
             }
         }
