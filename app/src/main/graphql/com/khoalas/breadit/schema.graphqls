@@ -529,13 +529,40 @@ type Node {
 
 # SubredditFeedSdui
 
-input AdContextInput {
+
+# TODO distance
+type AdContextInput {
     layout: AdLayout
+    distance: String
+    deviceAdId: String
+    clientSignalSessionData: ClientSignalSessionData
+    feedSlotIndexData: FeedSlotIndexData
+    forceAds: ForceAds
 }
 
 # TODO
-input FeedContextInput {
+type ForceAds {
+    field: String
+}
+
+type FeedSlotIndexData {
+    postsSeenCount: Int
+    adsSeenCount: Int
+    feedCorrelationId: String
+}
+
+type ClientSignalSessionData {
+    adsSeenCount: Int
+    totalPostsSeenCount: Int
+    sessionStartTime: String
+}
+
+# TODO filterPosts
+type FeedContextInput {
     layout: FeedLayout
+    experimentOverrides: [Experiment]
+    filterPosts: [String]
+    navigationSessionId: String
 }
 
 type SubredditV3 {
@@ -607,7 +634,8 @@ type AdPayload {
 }
 
 type Experiment {
-
+    experimentName: String,
+    experimentVariant: String
 }
 
 type AdFormatData {
